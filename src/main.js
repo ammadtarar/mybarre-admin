@@ -37,6 +37,30 @@ Vue.mixin({
     // this.$el.addEventListener('itemSelected', e => console.log(
     //   "got it in main,js"));
     this.removeNotication();
+
+    String.prototype.replaceAll = function(str1, str2, ignore) {
+      return this.replace(new RegExp(str1.replace(
+          /([\/\,\!\\\^\$\{\}\[\]\(\)\.\*\+\?\|\<\>\-\&])/g, "\\$&"
+        ), (ignore ?
+          "gi" : "g")), (typeof(str2) == "string") ? str2.replace(
+          /\$/g, "$$$$") :
+        str2);
+    };
+
+    Array.prototype.contains = function(obj) {
+
+      var i = this.length;
+      while (i--) {
+        console.log("this[i] = ", this[i]);
+        console.log("obj = ", obj);
+        if (this[i] === obj) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+
   },
   computed: {
 

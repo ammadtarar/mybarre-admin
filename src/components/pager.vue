@@ -1,10 +1,10 @@
 <template>
 		<div class="pagerInnerContainer">
-			<img class="pagerBt" @click="prev" src="../assets/ic_back.png"></img>
+			<img class="pagerBt" src="../assets/ic_left_black.png" @click="prev" ></img>
 			<div class="desc">
 				PAGE <span style="font-size : 22px ;">{{pageNumber}}</span> of {{limit}}
 			</div>
-			<img class="pagerBt" @click="next" src="../assets/ic_next.png"></img>
+			<img class="pagerBt" @click="next" src="../assets/ic_right_black.png"></img>
 	</div>
 
 </template>
@@ -49,25 +49,30 @@ export default {
 <style lang="css">
 
 .pagerInnerContainer{
-	width: 300px;
+	min-width: 200px;
 	height: 50px;
 	display: flex;
+	flex-direction: row;
 	overflow: hidden;
-	color: white;
+	color: black;
 	line-height: 50px;
 	justify-content: space-between;
+	align-items: center;
 	border-radius: 10px;
-	border: 2px solid #4E08F0;
+	border: 2px solid black;
+	padding-left: 10px;
+	padding-right: 10px;
+	box-shadow: 0px 0px 10px 0px #BDBDBD;
+	background: transparent;
 }
 
 .pagerBt{
 	margin-left: 5px;
 	margin-right: 5px;
-	width: 40px;
-	height: 40px;
+	width: 20px;
+	height: 20px;
 	transition: all 0.25s;
-	color: white;
-	margin-top: 5px;
+	color: black;
 	border-radius: 10px;
 }
 
@@ -75,19 +80,22 @@ export default {
 	/* margin-top: 3px;
 	margin-left: 3px;
 	margin-right: 3px; */
-	background: #4E08F0;
+	width: 40px;
+	height: 40px;
+
 }
 
 .desc{
 	width: 180px;
 	height: 50px;
 	line-height: 50px;
-	color: white;
+	color: black;
 	font-size: 12px;
 	font-weight: 600;
 	text-align: center;
 	font-family: medium;
 }
+
 
 
 </style>

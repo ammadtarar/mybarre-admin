@@ -9,7 +9,7 @@ if (token !== undefined && token !== null && token !== "") {
 
 
 
-// const baseURL = 'http://localhost:3001/';
+//const baseURL = 'http://localhost:3001/';
 const baseURL = 'https://api-staging.mybarrefitness.com/';
 axios.defaults.baseURL = baseURL;
 
@@ -19,6 +19,7 @@ export const HTTP = axios.create({
 });
 
 export const URLS = {
+  baseURL: baseURL,
   REGISTER: '/admin/user/register',
   LOGIN: '/admin/login',
   OTP: {
@@ -28,7 +29,6 @@ export const URLS = {
   FILE: {
     UPLOAD: 'file/upload',
     BY_ID: 'file/:id',
-    RENAME: 'file/:id/rename'
   },
   USER: {
     LIST_ALL: 'user/list/all',
@@ -64,7 +64,8 @@ export const URLS = {
   COURSE: {
     LIST_ALL: 'course/list/all',
     CREATE: 'course/create',
-    BY_ID: 'course/:id'
+    BY_ID: 'course/:id',
+    REPORT: 'course/:id/report'
   },
   MEMBERSHIP: {
     DETAIL_BY_ID: 'memberships/:id',
@@ -87,5 +88,11 @@ export const URLS = {
   },
   CONFIGS: {
     CONFIG: 'configs'
+  },
+  COUPON: {
+    LIST_ALL: 'coupon/list/all',
+    BY_ID: 'coupon/:id',
+    CREATE: 'coupon/create',
+    USERS_REPORT: 'coupon/:id/users/list/report'
   }
 }

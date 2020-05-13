@@ -7,21 +7,41 @@
   <div class="order" v-if="index === 1">
 
     <div class="top">
-      <img src="../assets/ic_back.png" class="goBack" @click="goBack">
+      <img src="../assets/ic_left_black.png" class="goBack" @click="goBack">
       <label class="pageDesc" style="font-family : 'Bold' ; font-size : 24px">User Detail</label>
     </div>
 
     <expandBtn title="Basic Information" @onToggle="expandBasicInfo = $event" default="true" style="margin-top : 20px"/>
 
     <div v-if="expandBasicInfo && user" class="cont">
+
+      <div  >
+        <div class="tripleKeyValCont">
+          <label class="key">Headshot</label>
+          <img  :src="user.user.avatar_url"  class="dp" >
+        </div>
+      </div>
+
+
       <div class="half-half" >
         <div class="keyValCont">
-          <label class="key">User ID</label>
-          <label class="val">{{user.user.id || 'N/A'}}</label>
+          <label class="key">First name</label>
+          <label class="val">{{user.user.first_name || 'N/A'}}</label>
         </div>
         <div class="keyValCont">
-          <label class="key">Name</label>
-          <label class="val">{{user.user.name || 'N/A'}}</label>
+          <label class="key">Family name</label>
+          <label class="val">{{user.user.last_name || '--'}}</label>
+        </div>
+      </div>
+
+      <div class="half-half" >
+        <div class="keyValCont">
+          <label class="key">Nickname</label>
+          <label class="val">{{user.user.nickname || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Name on Certificate</label>
+          <label class="val">{{user.user.certificate_name || 'N/A'}}</label>
         </div>
       </div>
 
@@ -67,8 +87,8 @@
           <label class="val">{{user.user.nationality || 'N/A'}}</label>
         </div>
         <div class="keyValCont">
-          <label class="key">Preffered Language</label>
-          <label class="val">{{user.user.preffered_language || 'N/A'}}</label>
+          <label class="key">Wechat ID/Username</label>
+          <label class="val">{{user.user.wechat_id || 'N/A'}}</label>
         </div>
       </div>
 
@@ -77,7 +97,21 @@
           <label class="key">Ocuupation</label>
           <label class="val">{{user.user.occupation || 'N/A'}}</label>
         </div>
+        <div class="keyValCont">
+          <label class="key">User ID</label>
+          <label class="val">{{user.user.id || 'N/A'}}</label>
+        </div>
+      </div>
 
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Training Top Size</label>
+          <label class="val">{{user.user.top_size || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Training Socks Size</label>
+          <label class="val">{{user.user.sock_size || 'N/A'}}</label>
+        </div>
       </div>
 
     </div>
@@ -181,7 +215,7 @@
 		</div>
 
     <div class="hori_cont" style="margin-top : 20px">
-      <expandBtn title="Membership Information" @onToggle="expandMembershipInfo = $event"/>
+      <expandBtn title="Training Information" @onToggle="expandMembershipInfo = $event"/>
 
 
 
@@ -217,17 +251,17 @@
 
     <div v-if="expandMembershipInfo && memberships" class="cont">
       <div class="empty" v-if="memberships.length <= 0">
-        No Memberships
+        No Trainings
       </div>
       <table style="margin-top : 10px" v-if="memberships.length > 0">
         <thead>
           <tr >
             <th  style="width : 5%">ID</th>
-            <th  style="width : 15%">START</th>
-            <th  style="width : 15%">END</th>
-            <th  style="width : 15%">STATUS</th>
-
-            <th  style="width : 15%">OUT TRADE #</th>
+            <th  style="width : 10%">START</th>
+            <th  style="width : 10%">END</th>
+            <th  style="width : 10%">STATUS</th>
+            <th  style="width : 15%">PAYMENT OUT TRADE #</th>
+            <th  style="width : 15%">WAS COUPON USED</th>
             <th  style="width : 10%">ACTIONS</th>
           </tr>
         </thead>
@@ -236,12 +270,13 @@
             <td >{{item.id || 'N/A'}}</td>
             <td >{{item.start || 'N/A'}}</td>
             <td >{{item.end || 'N/A'}}</td>
-            <td >{{item.status ? item.status.replace('_' , ' ').toUpperCase() : 'N/A'}}</td>
+            <td >{{item.status ? item.status.replace('-' , ' ').toUpperCase() : 'N/A'}}</td>
             <td >{{item.out_trade_no || 'N/A'}}</td>
+            <td >{{item.couponId > 0  ? 'Yes' :  'No'}}</td>
             <td >
               <button
                   @click="onMembershipClick(item)"
-                  class="btAction purple"
+                  class="btAction green"
                 >DETAILS</button>
             </td>
           </tr>
@@ -337,11 +372,12 @@
       <table style="margin-top : 10px" v-if="user.orders.length > 0">
         <thead>
           <tr >
-            <th  style="width : 5%">ID</th>
-            <th  style="width : 75">Products
+            <th  style="width : 65%">Products
               <div class="productsList">
                 <div class="item" >
                   <label class="name heading" style="text-align : left">Product Name</label>
+                  <label class="count heading">Color</label>
+                  <label class="count heading">Size</label>
                   <label class="count heading"># Of Pieces</label>
                   <label class="price heading">Unit Price</label>
                   <label class="price heading">Sub Total</label>
@@ -349,17 +385,19 @@
               </div>
 
             </th>
-            <th  style="width : 10%">Status</th>
+            <th  style="width : 15%">Status</th>
+            <th  style="width : 10%">SHIPPING FEE</th>
             <th  style="width : 10%">Total Amount</th>
           </tr>
         </thead>
         <tbody>
           <tr  v-bind:key="user.id" v-for="order in user.orders">
-            <td >{{order.id || 'N/A'}}</td>
             <td >
               <div class="productsList">
                 <div class="item" v-for="product in order.items">
                   <label class="name">{{product.product.name}}</label>
+                  <label class="count">{{product.color ? product.color.name_en : 'N/A'}}</label>
+                  <label class="count">{{product.size ? product.size.name_en : 'N/A'}}</label>
                   <label class="count">x{{product.count}}</label>
                   <label class="price">¥ {{product.product.price}}</label>
                   <label class="price">¥ {{getSubTotal(product)}}</label>
@@ -367,6 +405,7 @@
               </div>
             </td>
             <td >{{order.status.replace('_' , ' ').toUpperCase()}}</td>
+            <td >¥{{order.shipping_fee || '0.0'}}</td>
             <td >¥ {{getTotalAmount(order)}}</td>
           </tr>
         </tbody>
@@ -638,7 +677,7 @@ var NotificationsController = require("../components/NotificationsController.js"
         .then(function(res) {
           ctx.getMembership()
           ctx.showUpdateStatusModal = false;
-          NotificationsController.showNotification('success' , 'Membership status updated');
+          NotificationsController.showNotification('success' , 'Training status updated');
           NotificationsController.hideActivityIndicator();
         })
         .catch(function(error) {
@@ -767,8 +806,9 @@ var NotificationsController = require("../components/NotificationsController.js"
           }
         })
         .then(function(res) {
-          ctx.membership = res.data.data[0];
           ctx.memberships = res.data.data;
+          ctx.membership = res.data.data[ctx.memberships.length - 1];
+
           ctx.newStatus = ctx.membership.status;
           NotificationsController.hideActivityIndicator();
         })
@@ -823,16 +863,17 @@ var NotificationsController = require("../components/NotificationsController.js"
   flex-direction: column;
 }
 .goBack{
-  width : 30px ;
-  height : 30px;
+  width : 20px ;
+  height : 20px;
   margin-right : 10px ;
-  border : 2px solid white ;
+  border : 2px solid black ;
   border-radius : 30px;
   transition : all 0.5s;
+  padding: 5px;
 }
 
 .goBack:hover{
-  background: #4E08F0;
+  background: #fce4ec;
 }
 
 .cont{
@@ -848,7 +889,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 
 .tripleKeyValCont{
-  width: 33%;
+  width: auto;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -858,7 +899,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 }
 
 .tripleKeyValCont:nth-of-type(1){
-  margin-right: 0.3%;
+  margin-right: 20px;
 }
 
 .empty{
@@ -867,11 +908,11 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 100px;
   text-align: center;
   font-size: 14px;
-  color: white;
+  color: #e91e63;
 }
 
 .tripleKeyValCont:nth-of-type(2){
-  margin-right: 0.3%;
+  margin-right: 20px;
 }
 
 .keyValCont{
@@ -905,7 +946,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 20px;
   font-family: 'Thin';
   font-size: 14px;
-  color: white;
+  color: black;
   text-align: left;
 }
 
@@ -915,7 +956,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 40px;
   font-family: 'Medium';
   font-size: 16px;
-  color: white;
+  color: black;
   text-align: left;
   border-bottom: 0.5px solid #424242;
 }
@@ -938,7 +979,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 .order .top .pageDesc{
   width: calc(100% - 120px);
-	color: white;
+	color: black;
 	font-size: 18px;
 	font-family: 'Thin';
   text-align: left;
@@ -1050,6 +1091,8 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 .productsList .item{
   height: auto;
+  display: flex;
+  flex-direction: row;
 }
 
 .productsList .item .name{
@@ -1061,6 +1104,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   color: #616161;
   text-align: left;
   font-family: 'Bold';
+
 }
 
 .productsList .item .count{
@@ -1088,7 +1132,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 .productsList .item  .heading{
   font-size: 12px;
-  color: #4E08F0;
+  color: black;
   font-family: 'Bold';
   text-align: right;
 }
@@ -1136,5 +1180,12 @@ var NotificationsController = require("../components/NotificationsController.js"
   padding-right: 20px;
 }
 
+.dp{
+  width: 150px;
+  height: 150px;
+  border-width: 1px solid gray;
+  margin-top: 10px;
+  background: gray;
+}
 
 </style>

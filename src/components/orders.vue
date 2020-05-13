@@ -47,13 +47,13 @@
 							<td>
 								<button
 								@click="$emit('showOrderDetail' , user.id)"
-										class="btAction purple"
+										class="btAction green"
 									>DETAILS</button>
 
 									<button
 									v-if="user.status  === 'pending_dispatch'"
-									@click="displayUpdateStatusModal(user)"
-											class="btAction purple"
+									@click="displayChecklistModal(user)"
+											class="btAction green"
 										>MARK AS DISPATCHED</button>
 							</td>
 		        </tr>
@@ -124,6 +124,44 @@
 			</modal>
 
 
+			<modal v-if="showChecklistModal"  @close="showChecklistModal = false ; updateableOrderObject = null" size="big">
+					<h3 slot="header" style="text-align : left;">Products Checklist</h3>
+					<div slot="body" class="modalBody">
+						<label style="color : #37474f">Please refer to this products checklist and mark all the item to continue</label>
+
+						<table  style="margin-top : 20px">
+						<thead style="text-align : center">
+							<tr >
+								<th  style="width : 10%">Check</th>
+								<th  style="width : 30">Item Name</th>
+								<th  style="width : 20">Quantity</th>
+								<th  style="width : 20%">Color</th>
+								<th  style="width : 20%">Size</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr  v-bind:key="item.id" v-for="item in updateableOrderObject.items" style="text-align : center">
+								<td >
+									<input type="checkbox" :value="item.selected"  v-model="item.selected" @click="item.selected = !item.selected;"></input>
+								</td>
+								<td >{{item.product.name || 'N/A'}}</td>
+								<td >{{item.count || 'N/A'}}</td>
+								<td >{{item.color.name_en || 'N/A'}}</td>
+								<td >{{item.size.name_en || 'N/A'}}</td>
+							</tr>
+						</tbody>
+					</table>
+
+
+					</div>
+					<div class="buttonsWrapper" slot="footer">
+						<div class="bottonsContainer" >
+							<button type="button" class="bt neg" @click="showChecklistModal = false ; updateableOrderObject = null">Abort</button>
+							<button type="button" class="bt pos" @click="itemsChecked">Update</button>
+						</div>
+					</div>
+			</modal>
+
     </div>
 </template>
 
@@ -159,10 +197,31 @@ var NotificationsController = require("../components/NotificationsController.js"
 				courierCompany: null,
 				trackingNumber: null,
 				orderStatus : 'null',
-				statuses: ['all' , 'pending_payment', 'pending_dispatch', 'dispatched', 'completed']
+				statuses: ['all' , 'pending_payment', 'pending_dispatch', 'dispatched', 'completed'],
+				showChecklistModal: false
 	    };
 	  },
 		methods:{
+			itemsChecked(){
+				 var total = this.updateableOrderObject.items.length;
+				 var count = 0;
+				this.updateableOrderObject.items.forEach((item, i) => {
+					if (item.selected) {
+						count++;
+					}
+				});
+				if (total === count) {
+					this.showChecklistModal = false;
+					this.displayUpdateStatusModal(this.updateableOrderObject);
+				}else{
+					NotificationsController.showNotification('warning' , 'Please check mark all the products in the list')
+				}
+			},
+			displayChecklistModal(order){
+				console.log(order)
+				this.updateableOrderObject = order;
+				this.showChecklistModal = true;
+			},
 			displayUpdateStatusModal(bundle){
 				console.log("displayUpdateStatusModal");
 				this.updateableOrderObject = bundle;
@@ -279,20 +338,20 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 .prodImgPicker {
  width: 150px;
- height: 40px;
-	line-height: 40px;
+ height: 38px;
+	line-height: 38px;
  text-align: center;
  border-radius: 4px;
  font-size: 15px;
  transition: all 0.25s;
-	color: #4E08F0;
-	border: 2px solid #4E08F0;
+	color: #e91e63;
+	border: 2px solid #e91e63;
 	font-family: black;
 	margin-left: 10px;
 }
 
 .prodImgPicker:hover{
-	background: #4E08F0;
+	background: #e91e63;
 	color: white;
 }
 

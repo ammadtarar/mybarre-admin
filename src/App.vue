@@ -1,13 +1,19 @@
 <template>
   <div id="app">
 
+    <img class="bgImg">
+  </img>
+  <div class="overlay">
+
+  </div>
+
+
+    <router-view class="mainAppCont"/>
+
     <div class="notificationBar" id="notificationBar">
       <label class="notificationText" id="notificationMsg">Login failed</label>
       <img class="notificationCloseBtn" src="./assets/ic_close_white.png" @click="removeNotication"/>
     </div>
-
-    <router-view/>
-
 
     <transition >
       <div class="modal-mask" id="loadingDiv" style=" visibility : hidden">
@@ -122,6 +128,7 @@
 @font-face {
     font-family: 'Regular';
     src: url(./assets/fonts/Saira-Regular.ttf) format('truetype');
+
 }
 
 @font-face {
@@ -163,6 +170,32 @@
     background: transparent;  /* Optional: just make scrollbar invisible */
 }
 
+.bgImg{
+  width: 100vw;
+  height: 100vh;
+  background-image : url("http://image.mybarrefitness.com/images/1536208522834.jpg");
+  background-position: center;
+ background-size: cover;
+ overflow: hidden;
+}
+
+.overlay{
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.93);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+.mainAppCont{
+  width: 100vw;
+  height: 100vh;
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
 
 .notificationBar{
   width: 100%;
@@ -280,6 +313,10 @@
   text-align: center;
 }
 
+table{
+  box-shadow: 0px 0px 10px 0px #BDBDBD;
+}
+
 .table{
   width: 100%;
 
@@ -327,8 +364,15 @@
 }
 
 
+.btActionCentered{
+  min-width: 100px !important;
+  line-height: 30px;
+  padding: 4px 10px 4px 10px;
+}
+
+
 .btAction{
-  height: 30px;
+  padding: 4px 10px 4px 10px;
   color: white;
   margin: 4px;
   border-radius: 4px;
@@ -370,13 +414,13 @@
 }
 
 .purple{
-  border: 1px solid #4E08F0;
+  border: 1px solid #e91e63;
   background: transparent;
-  color: #4E08F0;
+  color: #e91e63;
 }
 
 .purple:hover{
-  background: #4E08F0;
+  background: #e91e63;
   color: white;
 }
 
@@ -769,7 +813,7 @@ input[type="radio"] {
 }
 
 input[type="radio"]:checked {
-  background-color: #4E08F0;
+  background-color: #e91e63;
 }
 
 input[type="file"] {
@@ -825,7 +869,7 @@ position: relative;
 
 .videoContainer{
   position: fixed;
-  z-index: 9999;
+  z-index: 9999999;
   top: 0;
   left: 0;
   width: 100%;
@@ -863,7 +907,7 @@ position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
-  border-bottom: 3px solid #4E08F0;
+  border-bottom: 3px solid #e91e63;
 }
 
 .videoContainer  .preview_top .title{
@@ -885,7 +929,7 @@ position: relative;
 .videoContainer  .preview_top .close:hover{
   /* width: 40px;
   height: 40px; */
-  background: #4E08F0;
+  background: #e91e63;
   border: 2px solid white;
 }
 

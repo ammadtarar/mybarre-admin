@@ -3,20 +3,24 @@
 
     <div class="top">
 
-      <img src="../assets/ic_back.png" class="goBack" @click="goBack">
+      <img src="../assets/ic_left_black.png" class="goBack" @click="goBack">
 
       <label class="pageDesc" style="font-family : 'Bold' ; font-size : 24px">Bundle Detail</label>
 
-      <div class="addFiles" @click="showFilesModal = true">
+      <div class="btAction btActionCentered green" @click="showFilesModal = true">
         ADD FILES
       </div>
 
-      <div class="addFiles" v-if="!isEditMode" @click="isEditMode = true">
+      <div class="btAction btActionCentered orange" v-if="!isEditMode" @click="isEditMode = true">
         EDIT
       </div>
 
-      <div class="addFiles" v-if="isEditMode" @click="updateBundle(null)">
+      <div class="btAction btActionCentered green" v-if="isEditMode" @click="updateBundle(null)">
         SAVE
+      </div>
+
+      <div class="btAction btActionCentered red" v-if="isEditMode" @click="isEditMode = false">
+        CANCEL
       </div>
     </div>
 
@@ -474,7 +478,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   font-family: 'Bold';
   border: 0.5px solid gray;
   border-radius: 4px;
-  color: white;
+  color: black;
   padding: 10px;
   outline: none;
 }
@@ -489,7 +493,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 20px;
   font-family: 'Thin';
   font-size: 14px;
-  color: white;
+  color: black;
   text-align: left;
 }
 
@@ -499,7 +503,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 40px;
   font-family: 'Medium';
   font-size: 16px;
-  color: white;
+  color: black;
   text-align: left;
   border-bottom: 0.1px solid gray;
 }
@@ -522,7 +526,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 .training .top .pageDesc{
   width: calc(100% - 120px);
-	color: white;
+	color: black;
 	font-size: 18px;
 	font-family: 'Thin';
   text-align: left;
@@ -553,10 +557,10 @@ var NotificationsController = require("../components/NotificationsController.js"
 	line-height: 50px;
 	font-size: 20px;
 	font-weight: bold;
-	color: white;
+	color: black;
 	font-family: 'Bold';
 	text-align: left;
-	border-bottom: 2px solid #4E08F0;
+	border-bottom: 2px solid black;
 	margin-top: 20px;
 }
 
@@ -637,7 +641,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 20px;
   font-family: 'Thin';
   font-size: 14px;
-  color: white;
+  color: black;
   text-align: left;
   width: auto !important;
   margin-right: 10px;
@@ -647,7 +651,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 
 .imgPickerBtn{
-  background: #4E08F0;
+  background: #e91e63;
   color: white;
   padding: 2px 6px 2px 6px;
   font-size: 12px;

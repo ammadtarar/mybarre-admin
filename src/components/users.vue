@@ -1,7 +1,7 @@
 <template lang="html">
 
 
-		<div style="display : inline-block ; width : 100% ">
+		<div style="display : inline-block ; width : 100% ; margin-top : 20px">
       <transition name="slide-fade">
 
 				<div class="full_container">
@@ -13,7 +13,7 @@
 							Search
 						</a>
 
-						<a class="bt_container" v-if="keyword !== ''" @click="clearSearch">
+						<a class="bt_container" v-if="keyword !== '' || userStatus !== 'null'" @click="clearSearch">
 							Clear Search
 						</a>
 					</div>
@@ -26,26 +26,36 @@
 					<table v-if="applicants.length >= 1">
 		      <thead>
 		        <tr >
-							<th  style="width : 2">ID</th>
-		          <th  style="width : 20">NAME</th>
-		          <th  style="width : 20%">EMAIL</th>
-		          <th  style="width : 20%">PHONE</th>
-							<th  style="width : 13%">GENDER</th>
-							<th  style="width : 15%">ACTIONS</th>
+							<th  style="width : 4">ID</th>
+		          <th  style="width : 10">FIRST NAME</th>
+							<th  style="width : 10">FAMILY NAME</th>
+							<th  style="width : 10">NICKNAME</th>
+		          <th  style="width : 10%">EMAIL</th>
+		          <th  style="width : 10%">PHONE</th>
+							<th  style="width : 8%">GENDER</th>
+							<th  style="width : 10%">WECHAT ID</th>
+							<th  style="width : 8%">COURSE</th>
+							<th  style="width : 12%">STATUS</th>
+							<th  style="width : 8%">ACTIONS</th>
 		        </tr>
 		      </thead>
 		      <tbody>
 		        <tr  v-bind:key="user.id" v-for="user in applicants">
 							<td >{{user.id || 'N/A'}}</td>
-							<td >{{user.name || 'N/A'}}</td>
+							<td >{{user.first_name || 'N/A'}}</td>
+							<td >{{user.last_name || 'N/A'}}</td>
+							<td >{{user.nickname || 'N/A'}}</td>
 		          <td >{{user.email || 'N/A'}}</td>
 							<td >{{user.phone || 'N/A'}}</td>
 		          <td >{{user.gender ? user.gender.toUpperCase() : 'N/A' || 'N/A'}}</td>
+							<td >{{user.wechat_id || 'N/A'}}</td>
+							<td ><span style="white-space: pre-wrap;">{{getCourse(user)}}</span></td>
+							<td >{{getMembershipStatus(user)}}</td>
 							<td>
-								<a :href="user.cv_url">
+								<a >
 									<button
 									@click="$emit('showUserDetail' , user.id)"
-										class="btAction purple"
+										class="btAction green"
 									>DETAILS</button>
 								</a>
 							</td>
@@ -65,6 +75,17 @@
 						<label style="color : #37474f">You can search user by using keywords or use any of the filters below. A keyword could be part of the name , email etc</label>
 						<label class="inputTitle spacing30">Keyword</label>
 						<input type="text" v-model="keyword" placeholder="Enter a keyword here" class="textInput" />
+
+						<label class="inputTitle spacing30">Status</label>
+						<select v-model="userStatus" >
+							<option disabled value="null">Select one type</option>
+								<option
+								v-for="item in statuses"
+									v-bind:value="item"
+									v-bind:key="item">
+									{{item.replaceAll("-" , " ").toUpperCase()}}
+								</option>
+						</select>
 					</div>
 					<div class="buttonsWrapper" slot="footer">
 						<div class="bottonsContainer" >
@@ -103,9 +124,64 @@ var NotificationsController = require("../components/NotificationsController.js"
 	      resultsPerPage : 25,
 				showSeachModal:false,
 				keyword: "",
-	    };
+				userStatus : 'null',
+				statuses: [
+				'pre-instructor', // MEANS USER PAIDED AND SIGNED UP
+				'pre-instructor-tbc', //USER DID NOT ATTEND TRAINING CLASSES
+				'instructor-in-training', // USER ATTENDED THE TRAINING CLASSES
+				'training-videos-submitted', // USER SUBMITTED TRAINING VIDEOS AFTER TRAINING CLASSES
+				'exam-passed', // SUBMITTED TRAINING VIDEOS PASSED
+				'exam-failed', // SUBMITTED TRAINING VIDEOS FAILED
+				'license-fee-paid', // USER PASSED THE EXAM AND PAID THE LICENSE FEE
+				'licensed-instructor' // USER PASSED THE EXAM AND PAID THE LICENSE FEE
+			]
+	    }
 	  },
 		methods:{
+			getMembershipStatus(user){
+				const memberships = user.memberships || null;
+				if (memberships === null) {
+					return 'Not Enrolled Yet';
+				}
+				if (memberships.length <= 0) {
+					return 'Not Enrolled Yet';
+				}
+				const active = memberships[memberships.length -1] || null;
+				if (active === null) {
+					return 'Not Enrolled Yet';
+				}
+
+				const status = active.status || null;
+				if (status === null) {
+					return 'Not Enrolled Yet';
+				}
+
+				var membershipStatus = status.replaceAll("-" , " ").toUpperCase();
+				return membershipStatus;
+			},
+			getCourse(user){
+				const memberships = user.memberships || null;
+				if (memberships === null) {
+					return 'Not Enrolled Yet';
+				}
+				if (memberships.length <= 0) {
+					return 'Not Enrolled Yet';
+				}
+				const active = memberships[memberships.length -1] || null;
+				if (active === null) {
+					return 'Not Enrolled Yet';
+				}
+
+				const course = active.course || null;
+
+				if (course === null) {
+					return 'Not Enrolled Yet';
+				}
+
+				return course.name + " \n ( " + course.start + " ) "
+
+
+			},
 			search(){
 				this.showSeachModal = false
 				this.getUsers()
@@ -115,7 +191,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 				this.keyword = "";
 				this.type = "null";
 				this.level = "null";
-				this.status = "null";
+				this.userStatus = "null";
 				this.getUsers()
 				this.showSeachModal = false;
 			},
@@ -130,6 +206,9 @@ var NotificationsController = require("../components/NotificationsController.js"
 				url = url + "&page=" + this.page;
 				if (this.keyword !== undefined && this.keyword !== null && this.keyword !== "" ) {
 					url = url + "&keyword=" + this.keyword;
+				}
+				if (this.userStatus !== undefined && this.userStatus !== null && this.userStatus !== "" && this.userStatus !== "null") {
+					url = url + "&status=" + this.userStatus;
 				}
 
 				HTTP.get(url ,  {
@@ -178,7 +257,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 .options_container .bt_container{
 	height: 54px;
 	width: 200px;
-	background: #4E08F0;
+	background: black;
 	border-radius: 10px;;
 	display: flex;
 	flex-direction: row;
@@ -187,6 +266,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 	color: white;
 	justify-content: center;
 	margin-left: 10px;
+	box-shadow: 0px 0px 10px 0px #BDBDBD;
 }
 .options_container .bt_container:hover{
 	font-family: bold;

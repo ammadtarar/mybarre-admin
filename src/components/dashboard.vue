@@ -1,4 +1,4 @@
-<template lang="html">
+CE Store<template lang="html">
   <div >
     <div class="dash">
 
@@ -19,7 +19,7 @@
             <label class="v">{{total.admins}}</label>
           </div>
           <div class="kvv">
-            <label class="k">MEMBERSHIPS</label>
+            <label class="k">TRAINGINGS</label>
             <label class="v">{{total.memberships}}</label>
           </div>
           <div class="kvv">
@@ -50,10 +50,10 @@
           <div class="titleContOuter">
             <div class="titleCont" style="border-left: 4px solid #D81B60;">
               <label class="name" style="color : #D81B60">TOTAL REVENUE</label>
-              <label class="value" >ACCUMLATED REVENUE FROM MEMBERSHIPS , STORE and BUNDLES</label>
+              <label class="value" >ACCUMLATED REVENUE FROM TRAINGINGS , STORE and BUNDLES</label>
 
               <label class="totalRevenue">
-                ¥{{ parseFloat(revenue.store) + parseFloat(revenue.membership) + parseFloat(revenue.bundles)}}</label>
+                ¥{{getTotalRevenue(revenue)}}</label>
             </div>
           </div>
 
@@ -64,9 +64,10 @@
           :donut="true"
           :data="[
           ['Store' , revenue.store],
-          ['Memberships', revenue.membership] ,
+          ['Store Shipping' , revenue.shippingRevenue],
+          ['Trainings', revenue.membership] ,
           ['License' , revenue.license],
-          ['Bundles', revenue.bundles] ]"></pie-chart>
+          ['CE Store', revenue.bundles] ]"></pie-chart>
 
         </div>
       </div>
@@ -77,7 +78,7 @@
           <div class="titleContOuter">
             <div class="titleCont" style="border-left: 4px solid #F57C00;">
               <label class="name" style="color : #F57C00">CREATION BY DATE</label>
-              <label class="value" >USERS , ADMINS , MEMBERSHIPS , STORE ORDERS AND BUNDLE ORDERS CREATION BASED ON CREATION DATE</label>
+              <label class="value" >USERS , ADMINS , TRAINGINGS , STORE ORDERS AND CE STORE ORDERS CREATION BASED ON CREATION DATE</label>
 
             </div>
           </div>
@@ -87,9 +88,9 @@
            :data="[
            {name: 'USERS', data: graphs.users},
            {name: 'ADMINS', data: graphs.admins},
-           {name: 'MEMBERSHIPS', data: graphs.memberships},
+           {name: 'TRAINGINGS', data: graphs.memberships},
            {name: 'STORE ORDERS', data: graphs.storeOrders},
-           {name: 'BUNDLE ORDERS', data: graphs.bundleOrders},
+           {name: 'CE STORE ORDERS', data: graphs.bundleOrders},
            ]" />
         </div>
       </div>
@@ -127,6 +128,11 @@ import ApexCharts from 'apexcharts'
 	    };
 	  },
     methods:{
+      getTotalRevenue(revenue){
+        var total = parseFloat(revenue.store || 0.0)+ parseFloat(revenue.shippingRevenue || 0.0) + parseFloat(revenue.memberships || 0.0) + parseFloat(revenue.license || 0.0) + parseFloat(revenue.bundles || 0.0);
+        total = parseFloat(total).toFixed(2);
+        return total;
+      },
 			getUsers(){
 				NotificationsController.showActivityIndicator();
 				const ctx = this;
@@ -224,7 +230,13 @@ import ApexCharts from 'apexcharts'
 	display: inline-block;
 	padding-top: 20px;
   padding-bottom: 20px;
-  background: linear-gradient(#E0E0E0 , #BDBDBD) !important;
+
+
+  background: rgba(255,255,255,0.5);
+  box-shadow: 0px 0px 10px 0px #BDBDBD;
+
+
+
   margin-top: 20px;
   border-radius: 10px;
   padding-left: 10px;

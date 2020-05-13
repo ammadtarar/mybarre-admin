@@ -2,45 +2,104 @@
   <div class="order">
 
     <div class="top">
-      <img src="../assets/ic_back.png" class="goBack" @click="goBack">
+      <img src="../assets/ic_left_black.png" class="goBack" @click="goBack">
       <label class="pageDesc" style="font-family : 'Bold' ; font-size : 24px">Course Detail</label>
+
+      <div class="btnsContainer" >
+
+        <div class="btAction btActionCentered orange" @click="isEditing = true" v-if="!isEditing">
+          EDIT
+        </div>
+
+
+
+        <div class="btAction btActionCentered green" v-if="!isEditing" @click="showCheckInQe" >
+          CHECK IN QR
+        </div>
+
+        <div class="btAction btActionCentered green" v-if="!isEditing" @click="downloadUserList" >
+          DOWNLOAD USERS LIST
+        </div>
+
+        <div class="btAction btActionCentered green" v-if="!isEditing" @click="downloadDoc" >
+          DOWNLOAD WELCOME DOCUMENT
+        </div>
+
+        <div class="btAction btActionCentered green" @click="showUploadModal = true" v-if="!isEditing">
+          UPLOAD WELCOME DOCUMENT
+        </div>
+
+        <div class="btAction btActionCentered red" @click="showDeleteModal = true" v-if="!isEditing">
+          DELETE
+        </div>
+
+        <div class="btAction btActionCentered green" @click="updateCourse" v-if="isEditing">
+          SAVE
+        </div>
+
+        <div class="btAction btActionCentered red" @click="isEditing = false" v-if="isEditing">
+          CENCEL
+        </div>
+
+      </div>
+
     </div>
 
     <expandBtn title="Course Information" @onToggle="expandBasicInfo = $event" default="true" style="margin-top : 20px"/>
 
-    <div v-if="expandBasicInfo" class="cont">
+    <div v-if="expandBasicInfo && course" class="cont">
       <div class="half-half" >
         <div class="keyValCont">
           <label class="key">Name</label>
-          <label class="val">{{course.name || 'N/A'}}</label>
+          <label class="val" v-if="!isEditing">{{course.name || 'N/A'}}</label >
+          <input type="text" v-model="course.name"  placeholder="Enter title here" v-if="isEditing"/>
         </div>
         <div class="keyValCont">
           <label class="key">Price</label>
-          <label class="val">{{course.price || 'N/A'}}</label>
+          <label class="val" v-if="!isEditing">¥{{course.price || 'N/A'}}</label>
+          <input type="number" v-model="course.price"  placeholder="Enter title here" v-if="isEditing"/>
         </div>
       </div>
 
       <div class="half-half">
         <div class="keyValCont">
-          <label class="key">Start</label>
-          <label class="val">{{course.start || 'N/A'}}</label>
+          <label class="key">START</label>
+          <label class="val" v-if="!isEditing">{{course.start || 'N/A'}}</label>
+          <input type="date" v-model="course.start"  placeholder="Enter title here" v-if="isEditing"/>
         </div>
         <div class="keyValCont">
-          <label class="key">End</label>
-          <label class="val">{{course.end || 'N/A'}}</label>
+          <label class="key">END</label>
+          <label class="val" v-if="!isEditing">{{course.end || 'N/A'}}</label>
+          <input type="date" v-model="course.end"  placeholder="Enter title here" v-if="isEditing"/>
         </div>
       </div>
 
 
       <div class="half-half">
         <div class="keyValCont">
-          <label class="key">Seats</label>
-          <label class="val">{{course.seats || 'N/A'}}</label>
+          <label class="key">License Fee</label>
+          <label class="val" v-if="!isEditing">¥{{course.license_fee || 'N/A'}}</label>
+          <input type="number" v-model="course.license_fee"  placeholder="Enter title here" v-if="isEditing"/>
         </div>
         <div class="keyValCont">
           <label class="key">Available Seats</label>
-          <label class="val">{{course.available_seats || 'N/A'}}</label>
+          <label class="val" v-if="!isEditing">{{course.available_seats || 'N/A'}} / {{course.seats || 'N/A'}}</label>
+          <input type="number" v-model="course.available_seats"  placeholder="Enter title here" v-if="isEditing"/>
         </div>
+      </div>
+
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">VENUE</label>
+          <label class="val" v-if="!isEditing">{{course.venue || 'N/A'}}</label>
+          <input type="text" v-model="course.venue"  placeholder="Enter title here" v-if="isEditing"/>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Welcome Document URL</label>
+          <label class="val">{{course.welcome_doc_url || 'N/A'}}</label>
+        </div>
+
       </div>
 
 
@@ -48,45 +107,145 @@
 
     </div>
 
-    <expandBtn title="Memberships" @onToggle="expandMemberships = $event" style="margin-top : 20px"/>
+    <expandBtn title="Trainings" @onToggle="expandMemberships = $event" style="margin-top : 20px"/>
 
-    <div v-if="expandMemberships" class="cont">
+    <div v-if="expandMemberships && course" class="cont">
       <div class="empty" v-if="course.memberships.length <= 0">
-        No Memberships
+        No Trainings
       </div>
-      <table style="margin-top : 10px" v-if="course.memberships.length > 0">
-        <thead>
-          <tr >
-            <th  style="width : 5%">ID</th>
-						<th  style="width : 25%">STUDENT NAME</th>
-						<th  style="width : 15%">START</th>
-						<th  style="width : 15%">END</th>
-						<th  style="width : 15%">STATUS</th>
-						<th  style="width : 15%">OUT TRADE #</th>
-						<th  style="width : 10%">ACTIONS</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr  v-bind:key="course.id" v-for="item in course.memberships">
-            <td >{{item.id || 'N/A'}}</td>
-						<td >{{item.user.name || 'N/A'}}</td>
-						<td >{{item.start || 'N/A'}}</td>
-						<td >{{item.end || 'N/A'}}</td>
-            <td >{{item.status ? item.status.replace('_' , ' ').toUpperCase() : 'N/A'}}</td>
-            <td >{{item.out_trade_no || 'N/A'}}</td>
-						<td >
-							<button
-									@click="$emit('onMembershipClick' , item.id)"
-									class="btAction purple"
-								>DETAILS</button>
-						</td>
-          </tr>
-        </tbody>
-      </table>
+
+
+      <table style="margin-top : 10px" v-if="course.memberships.length >= 1">
+      <thead>
+        <tr >
+          <th  style="width : 4">ID</th>
+          <th  style="width : 8">FIRST NAME</th>
+          <th  style="width : 10">FAMILY NAME</th>
+          <th  style="width : 10">NICKNAME</th>
+          <th  style="width : 10%">EMAIL</th>
+          <th  style="width : 10%">PHONE</th>
+          <th  style="width : 6%">GENDER</th>
+          <th  style="width : 10%">WECHAT ID</th>
+          <th  style="width : 14%">STATUS</th>
+          <th  style="width : 10%">PAYMENT OUT TRADE #</th>
+          <th  style="width : 8%">ACTIONS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr  v-bind:key="membership.id" v-for="membership in course.memberships">
+          <td >{{membership.user.id || 'N/A'}}</td>
+          <td >{{membership.user.first_name || 'N/A'}}</td>
+          <td >{{membership.user.last_name || 'N/A'}}</td>
+          <td >{{membership.user.nickname || 'N/A'}}</td>
+          <td >{{membership.user.email || 'N/A'}}</td>
+          <td >{{membership.user.phone || 'N/A'}}</td>
+          <td >{{membership.user.gender ? membership.user.gender.toUpperCase() : 'N/A' || 'N/A'}}</td>
+          <td >{{membership.user.wechat_id || 'N/A'}}</td>
+          <td >{{getMembershipStatus(membership)}}</td>
+          <td >{{membership.out_trade_no || 'N/A'}}</td>
+          <td>
+            <a >
+              <button
+              @click="$emit('onMembershipClick' , membership.id)"
+                class="btAction green"
+              >DETAILS</button>
+            </a>
+          </td>
+        </tr>
+      </tbody>
+    </table>
 		</div>
 
 
 
+
+
+    <modal v-if="showUploadModal"  @close="showUploadModal = false" size="size">
+        <h3 slot="header" style="text-align : left;">Upload Welcome Document...</h3>
+        <div slot="body" class="modalBody">
+
+          <label style="color : #37474f">
+            You can upload the Weclome Document for this course. This document will show up under 'Training' section in the Wechat MiniProgram.
+          </label>
+
+          <label class="inputTitle spacing30" v-if="file">File Name</label>
+          <label style="color : #37474f" v-if="file">{{file.name}}</label>
+
+
+
+        </div>
+
+        <div class="buttonsWrapper" slot="footer">
+          <div class="bottonsContainer" style="width : 100% !important">
+            <div style="width : 50% ; height : 100% ; display : flex ; margin-left : 10px">
+              <label class="prodImgPicker">
+                Select Files
+                <input type="file" accept="application/pdf" @change="onFileChange" />
+              </label>
+            </div>
+            <button type="button"  class="bt neg" @click="showUploadModal = false ; file = null">Abort</button>
+            <button type="button" class="bt " @click="uploadFile" :disabled="!file" v-bind:class="{pos : file ,neg : !file }"  style="width : 190px !important; margin-left : 10px" >Upload</button>
+          </div>
+        </div>
+
+    </modal>
+
+
+    <modal v-if="showDeleteModal"  @close="showDeleteModal = false " size="size">
+        <h3 slot="header" style="text-align : left;">Delete Course ...</h3>
+        <div slot="body" class="modalBody">
+
+          <label style="color : #37474f">You can only delete a course that does not have any memberships</label>
+
+          <label class="inputTitle spacing30">Course Name</label>
+          <label style="color : #37474f;" >{{course.name}}</label>
+
+
+          <label style="color : #f44336; font-family : 'Bold'; font-size : 12px; margin-top : 14px;" v-if="course.memberships.length > 0">
+            You cannot delete this course. This course already has
+            <b style="color : #4E08F0; font-family : 'Black'; font-size : 18px;">{{course.memberships.length}}</b>
+             memberships
+          </label>
+
+
+        </div>
+        <div class="buttonsWrapper" slot="footer">
+          <div class="bottonsContainer" style="width : 100% !important">
+            <button type="button" class="bt neg" @click="showDeleteModal = false ; deletableCourse = null">Abort</button>
+            <button type="button" class="bt pos" v-if="course.memberships.length <= 0" @click="deleteCourse()">Delete</button>
+          </div>
+        </div>
+    </modal>
+
+
+
+    <modal v-if="displayCheckInQrModal"  @close="hideQrModal()" size="size">
+        <h3 slot="header" style="text-align : left;">Course Check In QR Code</h3>
+        <div slot="body" class="modalBody">
+
+          <label style="color : #37474f">Below is the check in QR code that users can scan with Wechat MiniProgram.</label>
+
+          <label class="inputTitle spacing30">Course Name</label>
+          <label style="color : #37474f;" >{{course.name}}</label>
+
+          <label class="inputTitle spacing30">QR Codee</label>
+          <div class="qrCont" ref="qrCont">
+            <vue-qr :text="qrStr" :callback="onQrGenerated" qid="testid"  :size="qrSize"></vue-qr>
+          </div>
+
+
+
+        </div>
+        <div class="buttonsWrapper" slot="footer">
+          <div class="bottonsContainer" style="width : 100% !important">
+
+
+
+            <button type="button" class="bt neg" @click="displayCheckInQrModal = false">Close</button>
+            <button type="button" class="bt pos" @click="downloadQr">Download</button>
+          </div>
+        </div>
+    </modal>
 
   </div>
 </template>
@@ -95,7 +254,7 @@
 
 import Modal from "../components/modal.vue";
 import ExpandBtn from "../components/expadBtn.vue";
-
+import VueQr from 'vue-qr'
 import {
     HTTP, URLS
 }
@@ -106,17 +265,180 @@ var NotificationsController = require("../components/NotificationsController.js"
 		name : 'courseDetail',
 		components: {
       Modal,
-      ExpandBtn
+      ExpandBtn,
+      VueQr
 	 },
 		props: ['courseId'],
 	 data() {
 		 return {
 			 course : null,
 			 expandBasicInfo: true,
-			 expandMemberships: true
+			 expandMemberships: true,
+       showUploadModal: false,
+       file : null,
+       isEditing: false,
+       showDeleteModal: false,
+       checkinModel : null,
+       displayCheckInQrModal: false,
+       qrStr : '',
+       qrDataUrl:'',
+       qrSize : 300
 		 };
 	 },
 		methods:{
+      getMembershipStatus(active){
+
+        const status = active.status || null;
+        if (status === null) {
+          return 'Not Enrolled Yet';
+        }
+
+        var membershipStatus = status.replaceAll("-" , " ").toUpperCase();
+        return membershipStatus;
+      },
+      downloadUserList(){
+        const course = this.course
+        if (course === null || course === undefined) {
+          NotificationsController.showNotification('danger' , 'Course is null');
+          return
+        }
+
+        NotificationsController.showActivityIndicator();
+        const ctx = this;
+        HTTP.get(URLS.COURSE.REPORT.replace(':id' , course.id) , {
+            headers: {
+              Authorization: localStorage.getItem("token")
+            },
+            responseType : 'blob'
+          })
+            .then(function(res) {
+              const url = window.URL.createObjectURL(new Blob([res.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'MYbarre-course-'+ course.name +'users-list.xls');
+              document.body.appendChild(link);
+              link.click();
+              NotificationsController.hideActivityIndicator();
+            })
+            .catch(function(error) {
+              NotificationsController.hideActivityIndicator();
+              NotificationsController.showErrorNotification(error.response.statusText);
+            });
+      },
+      downloadQr(){
+        var link = document.createElement('a');
+        link.download = 'mybarre_course_%id_checkin_qrcode.png'.replace('%id' , this.course.id);
+        link.href = this.qrDataUrl
+        link.click();
+      },
+      downloadDoc(){
+        var link = document.createElement('a');
+        link.href = this.course.welcome_doc_url
+        link.click();
+      },
+      showCheckInQe(){
+        this.checkinModel  = this.course;
+        this.qrStr = JSON.stringify({
+          courseId : this.course.id ,
+          courseName : this.course.name,
+          start : this.course.start,
+          end : this.course.end
+        })
+        this.displayCheckInQrModal = true
+      },
+      updateCourse(){
+        const ctx = this;
+        HTTP.patch(URLS.COURSE.BY_ID.replace(':id' , ctx.courseId) , {
+          name : ctx.course.name,
+          price : ctx.course.price,
+          start : ctx.course.start,
+          available_seats : ctx.course.available_seats,
+          seats : ctx.course.seats,
+          venue : ctx.course.venue,
+        }, {
+          headers: {
+            Authorization: localStorage.getItem("token")
+          }
+        })
+        .then(function(res) {
+          ctx.file = null;
+          ctx.showUploadModal = false;
+          NotificationsController.showNotification('success' , 'Course updated successfully')
+          ctx.isEditing = false;
+          NotificationsController.hideActivityIndicator();
+        })
+        .catch(function(error) {
+          ctx.isEditing = false;
+          NotificationsController.hideActivityIndicator();
+          NotificationsController.showErrorNotification(error);
+        });
+      },
+      deleteCourse(){
+        NotificationsController.showActivityIndicator();
+        const ctx = this;
+        HTTP.delete(URLS.COURSE.BY_ID.replace(':id' , this.course.id) , {
+            headers: {
+              Authorization: localStorage.getItem("token")
+            },
+          })
+            .then(function(res) {
+                NotificationsController.hideActivityIndicator();
+                NotificationsController.showNotification('success' , 'Course deleted successfully');
+                ctx.goBack()
+            })
+            .catch(function(error) {
+              NotificationsController.hideActivityIndicator();
+              NotificationsController.showErrorNotification(error);
+            });
+      },
+      uploadFile(){
+        console.log("uploadFile");
+        const ctx = this;
+        NotificationsController.showActivityIndicator();
+        var formData = new FormData();
+        formData.append("file", this.file);
+        var url = URLS.FILE.UPLOAD;
+        url = url + "?type=others";
+        var axios = HTTP.post(url, formData, {
+          headers: {
+            Authorization: localStorage.getItem("token")
+          }
+        })
+        .then(function(response){
+          console.log("File uploaded");
+          const url = response.data.url;
+
+          HTTP.patch(URLS.COURSE.BY_ID.replace(':id' , ctx.courseId) , {
+            welcome_doc_url : url
+          }, {
+            headers: {
+              Authorization: localStorage.getItem("token")
+            }
+          })
+          .then(function(res) {
+            ctx.file = null;
+            ctx.showUploadModal = false;
+            NotificationsController.showNotification('success' , 'Document uploaded successfully')
+            ctx.getCourse();
+            NotificationsController.hideActivityIndicator();
+          })
+          .catch(function(error) {
+            ctx.showUploadModal = false
+            NotificationsController.hideActivityIndicator();
+            NotificationsController.showErrorNotification(error);
+          });
+
+
+        })
+        .catch(function(err){
+          NotificationsController.hideActivityIndicator();
+          console.log(err);
+          NotificationsController.showErrorNotification(err);
+        })
+      },
+      onFileChange(e) {
+				this.file = e.target.files[0];
+			 },
       goBack(){
         this.$emit('hideCourseDetail')
       },
@@ -207,7 +529,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 100px;
   text-align: center;
   font-size: 14px;
-  color: white;
+  color: #e91e63;
 }
 
 .tripleKeyValCont:nth-of-type(2){
@@ -245,7 +567,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 20px;
   font-family: 'Thin';
   font-size: 14px;
-  color: white;
+  color: black;
   text-align: left;
 }
 
@@ -255,7 +577,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 40px;
   font-family: 'Medium';
   font-size: 16px;
-  color: white;
+  color: black;
   text-align: left;
   border-bottom: 0.5px solid #424242;
 }
@@ -277,11 +599,31 @@ var NotificationsController = require("../components/NotificationsController.js"
 }
 
 .order .top .pageDesc{
-  width: calc(100% - 120px);
-	color: white;
+  width: auto !important;
+	color: black;
 	font-size: 18px;
 	font-family: 'Thin';
   text-align: left;
+}
+
+.order .top .btnsContainer{
+  width: auto !important;
+  margin-left: auto;
+}
+
+.order .top .btnsContainer .btn{
+  width: auto !important;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  background: #4E08F0;
+  border-radius: 4px;
+  color: white;
+  font-size: 16px;
+  font-family: 'Medium';
+  margin-left: 10px;
+  transition: all 0.25s;
+  padding: 2px 10px 2px 10px;
 }
 
 

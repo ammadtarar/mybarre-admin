@@ -6,12 +6,16 @@
 
 
 
-      <transition name="slide-fade">
-        <div class="loginContainer">
+      <div class="loginContainer">
 
-          <img src="../assets/mybarree_transparent_logo.png" class="logo">
+        <label class="dashboard">Welcome to </br>
+
+        <img src="../assets/mybarree_transparent_logo.png" class="logo">
 
 
+        </br> Admin Dashboard</label>
+
+        <div class="loginCenter">
           <label class="inputTitle">Email</label>
           <input type="text"  v-model="username" placeholder="Enter your email address" class="textInput"  @input="onupdate"/>
 
@@ -20,13 +24,15 @@
           <input type="password"  v-model="password" placeholder="Enter your password" class="textInput" @input="onupdate"/>
 
           <button type="button" class="btLogin spacing30" :style="buttonBg" @click="login" :disable="!enableLogin">Login</button>
-
-
         </div>
-      </transition>
 
 
+        <div class="loginInner">
+          <label>©2020 MYbarre Fitness. All Rights Reseverd</label>
+          <label class="mwl">Made with <span style="color:#e81e62; font-size : 14px">♥</span> by <a style="color:#e81e62;font-family: Bold;" href="https://www.sawatechnologies.org">Sawa Technologies</a></label>
+        </div>
 
+      </div>
 
 
       <popup v-if="showPopup" :title="popupTitle" :content="popupMsg" :showNegativeButton="showNegativeButton" :negativeButtonTitle="negativeButtonTitle" :positiveButtonTitle="positiveButtonTitle" @onClickPopupNegativeButton="onClickPopupNegativeButton" @onClickPopupPositiveButton="onClickPopupPositiveButton"></popup>
@@ -40,21 +46,20 @@
 <style >
 .mainCont{
   width: 100vw;
-  height: 100vh;
-  overflow: scroll;
+  height: 97%;
 }
 
 .content{
   width: calc(100vw - 40px);
   border-radius: 4px;
   height: calc(100vh - 220px);
-  overflow: scroll;
   padding: 20px;
 }
 
 .logo{
-  width: 200px;
-  margin-bottom: 20px;
+  width: 300px;
+  margin: -30px 0px -48px -30px;
+
 }
 
 .center{
@@ -63,20 +68,50 @@
   top: calc(50% - 30px);
   transform: translate(-50%, -50%);
 }
-.loginContainer{
+
+.loginFooter{
   position: absolute;
-  left: 50%;
-  top: calc(50% - 30px);
-  transform: translate(-50%, -50%);
+  bottom: 0;
+  left: 0;
+  width: 100vw;
+  height: 30px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  width: 300px;
-  background: white;
+  align-items: flex-end;
+  font-size: 14px;
+}
+
+.loginCenter{
+  display: flex;
+  flex-direction: column;
+}
+.loginInner{
+  display: flex;
+  flex-direction: column;
+  margin-top: auto;
+  font-size: 12px;
+}
+
+.mwl{
+  margin-top: 10px;
+  margin-bottom: 10px;
+
+}
+.loginContainer{
+
+  width: 400px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0px 0px 100px 0px #BDBDBD;
+  z-index: 100;
+  position: absolute;
+  right: 0;
+  top: 0;
+
+  justify-content: center;
   padding: 20px;
-  border-radius: 4px;
-  overflow: hidden;
 }
 
 .admin{
@@ -114,19 +149,25 @@
 }
 
 .textInput:focus{
-  border-bottom: 2px solid #4E08F0;
+  border-bottom: 2px solid #e91e63;
 }
 
 .btLogin{
   width: 100%;
   height: 60px;
   color: white;
-  background: #37474f;
+  background: #e91e63;
   font-size: 20px;
   outline: none;
   border: solid 0px transparent;
   border-radius: 4px;
   font-family: 'Bold'
+}
+
+.mybarre{
+  color: black;
+  font-family: Medium;
+  font-size: 60px;
 }
 
 .regNotice{
@@ -139,14 +180,14 @@
   outline: none;
   padding: 6px 10px 6px 10px;
   border: 0px;
-  color: #4E08F0;
+  color: #e91e63;
   font-size: 18px;
   font-family: 'Bold';
   transition: all 0.5s;
 }
 
 .btRegister:hover{
-  background: #4E08F0;
+  background: #e91e63;
   color: white;
   border-radius: 4px;
   margin-left: 10px;
@@ -162,6 +203,15 @@
   transform: translate(-50%, -50%);
 
   font-size: 14px;
+}
+
+.dashboard{
+  font-size:41px;
+  font-family: ExtraLight;
+  color: #e91e63;
+  margin-bottom: 20px;
+  margin-top: auto;
+  text-align: left;
 }
 </style>
 
@@ -241,7 +291,7 @@ export default {
     onupdate(){
       if (this.username.length > 4 && this.password.length > 4) {
         this.buttonBg = {
-          background : "#4E08F0"
+          background : "#e91e63"
         }
         this.enableLogin = true;
       }else{

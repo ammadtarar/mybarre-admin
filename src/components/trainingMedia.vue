@@ -3,10 +3,27 @@
 
     <div class="top">
       <label class="pageDesc">You can manage all the videos , photos and other documents that will show up under <b>'Training'</b> section in the Wehchat MiniProgram once user is enrolled in the MYBARRE programme.</label>
-      <div class="addFiles" @click="showFilesModal = true">
+
+
+
+      <div class="btAction btActionCentered green" @click="showFilters = true; ">
+        FILTERS
+      </div>
+
+      <div class="btAction btActionCentered red" style="width : 200px !important;" @click="clearStages" v-if="filterStage != 'null'">
+        CLEAR FILTERS
+      </div>
+
+      <div class="btAction btActionCentered green"  @click="showFilesModal = true">
         ADD FILES
       </div>
     </div>
+
+    <label class="stagesNotice" v-if="filterStage == 'null'">Currently showing all files regardless of stages/statuses</label>
+    <label class="stagesNotice" v-if="filterStage != 'null'">Currently showing all the files for
+      <span class="stageName">{{filterStage.replaceAll("-" , " ")}}</span>
+      stage/status
+    </label>
 
 		<div class="section">
 			Videos ( {{videos.length}} )
@@ -42,7 +59,7 @@
 		</div>
 
 
-	<FilesUploadModal v-if="showFilesModal" @uploadSuccess="filesUploadSuccess" :bundleId='1'/>
+	<FilesUploadModal v-if="showFilesModal" @uploadSuccess="filesUploadSuccess" :bundleId='1' :needStage='true'/>
 
 
   <modal v-if="showDeleteModal"  @close="showDeleteModal = false ; deleteObject = null" size="size">
@@ -60,8 +77,32 @@
   </modal>
 
 
+  <modal v-if="showFilters"  @close="showFilters = false" size="size">
+      <h3 slot="header" style="text-align : left;">Filters</h3>
+      <div slot="body" class="modalBody">
+        <label style="color : #37474f; margin-bottom : 20px">Please select a user training status/stage to filters the files for.</label>
+
+        <select v-model="filterStage" >
+          <option disabled value="null">Select one stage/status</option>
+            <option
+            v-for="item in stages"
+              v-bind:value="item"
+              v-bind:key="item">
+              <span style="text-transform: capitalize;">{{item.replaceAll("-" , " ").toUpperCase()}}</span>
+            </option>
+        </select>
+
+      </div>
+      <div class="buttonsWrapper" slot="footer">
+        <div class="bottonsContainer" >
+          <button type="button" class="bt neg" @click="clearStages">Clear & Show All</button>
+          <button type="button" class="bt pos"@click="filterFiles" >Filter</button>
+        </div>
+      </div>
+  </modal>
+
   <modal v-if="showRenameModal"  @close="showRenameModal = false ; renameObject = null" size="size">
-      <h3 slot="header" style="text-align : left;">Rename File ...</h3>
+      <h3 slot="header" style="text-align : left;">Edit File ...</h3>
       <div slot="body" class="modalBody">
 
 
@@ -71,10 +112,19 @@
         <label class="inputTitle spacing30">New Name</label>
         <input type="text" v-model="rename" placeholder="Enter a new name for the file" class="textInput" />
 
+        <label class="inputTitle spacing30">Stages</label>
+        <div v-for="item in renameStages" class="stagesContainer">
+          <div class="stageContainer" style="margin-top : 10px;">
+            <input type="checkbox" :value="item.selected"  v-model="item.selected" @click="item.selected = !item.selected;">
+              <span style="text-transform: capitalize;">{{item.stage.replaceAll("-" , " ")}}</span>
+            </input>
+          </div>
+        </div>
+
       </div>
       <div class="buttonsWrapper" slot="footer">
         <div class="bottonsContainer" >
-          <button type="button" class="bt neg" @click="showRenameModal = false ; renameObject = null">Abort</button>
+          <button type="button" class="bt neg" @click="showRenameModal = false ; renameObject = null; renameStages = []">Abort</button>
           <button type="button" class="bt pos" @click="renameFile">Save</button>
         </div>
       </div>
@@ -120,6 +170,21 @@ var NotificationsController = require("../components/NotificationsController.js"
 				rename : '',
 				pdfurls:'//cdn.mozilla.net/pdfjs/tracemonkey.pdf',
 				isshowpdf:true,
+        selectedFilters : [],
+        showFilters: false,
+        stages : [
+          'pre-instructor', // MEANS USER PAIDED AND SIGNED UP
+          'pre-instructor-tbc', //USER DID NOT ATTEND TRAINING CLASSES
+          'instructor-in-training', // USER ATTENDED THE TRAINING CLASSES
+          'training-videos-submitted', // USER SUBMITTED TRAINING VIDEOS AFTER TRAINING CLASSES
+          'exam-passed', // SUBMITTED TRAINING VIDEOS PASSED
+          'exam-failed', // SUBMITTED TRAINING VIDEOS FAILED
+          'license-fee-paid', // USER PASSED THE EXAM AND PAID THE LICENSE FEE
+          'licensed-instructor' // USER PASSED THE EXAM AND PAID THE LICENSE FEE
+        ],
+        allFiles: [],
+        filterStage: "null",
+        renameStages : []
 			}
 		},
 		components:{
@@ -144,7 +209,7 @@ var NotificationsController = require("../components/NotificationsController.js"
       },
       filesUploadSuccess: function(){
         this.showFilesModal = false;
-        this.getTrainingData();
+        this.filterFiles();
       },
       displayDeleteModal(item){
         this.deleteObject = item;
@@ -153,12 +218,52 @@ var NotificationsController = require("../components/NotificationsController.js"
       displayRenameModal(item){
         this.renameObject = item;
         this.rename = "";
+
+        var objStages = JSON.parse(this.renameObject.stages) || [];
+        var renameStages = [];
+
+        this.stages.forEach((orignalStage, i) => {
+
+          if (typeof objStages === 'string') {
+            objStages = JSON.parse(objStages);
+          }
+          if (objStages.contains(orignalStage)) {
+            renameStages.push({
+              stage : orignalStage,
+              selected : true
+            });
+          }else{
+            renameStages.push({
+              stage : orignalStage,
+              selected : false
+            });
+          }
+        });
+
+        this.renameStages = renameStages;
         this.showRenameModal = true;
       },
       renameFile(){
         NotificationsController.showActivityIndicator();
         const ctx = this;
-        HTTP.patch(URLS.FILE.RENAME.replace(':id' , this.renameObject.id) , {name : this.rename} , {
+
+        var body = {};
+
+        if (this.rename !== null && this.rename !== undefined && this.rename !== "") {
+          body.name = this.rename;
+        }
+
+        var stages = [];
+        this.renameStages.forEach((item, i) => {
+          if (item.selected) {
+            stages.push(item.stage)
+          }
+        });
+
+        body.stages = JSON.stringify(stages);
+
+
+        HTTP.patch(URLS.FILE.BY_ID.replace(':id' , this.renameObject.id) , body , {
             headers: {
               Authorization: localStorage.getItem("token")
             },
@@ -169,12 +274,14 @@ var NotificationsController = require("../components/NotificationsController.js"
                 ctx.showRenameModal = false;
                 ctx.renameObject = null;
                 ctx.rename = "";
-                ctx.getTrainingData();
+                ctx.renameStages = [];
+                ctx.filterFiles();
             })
             .catch(function(error) {
               ctx.showRenameModal = false;
               ctx.renameObject = null;
               ctx.rename = "";
+              ctx.renameStages = [];
               NotificationsController.hideActivityIndicator();
               NotificationsController.showErrorNotification(error);
             });
@@ -191,7 +298,7 @@ var NotificationsController = require("../components/NotificationsController.js"
                 NotificationsController.hideActivityIndicator();
                 NotificationsController.showNotification('success' , 'File deleted successfully');
                 ctx.showDeleteModal = false;
-                ctx.getTrainingData();
+                ctx.filterFiles();
                 ctx.deleteObject = null;
             })
             .catch(function(error) {
@@ -201,15 +308,34 @@ var NotificationsController = require("../components/NotificationsController.js"
               NotificationsController.showErrorNotification(error);
             });
       },
+      filterFiles: function(){
+        this.getTrainingData()
+      },
       getTrainingData: function(){
         const ctx = this;
-        HTTP.get(URLS.BUNDLE.BY_ID.replace(':id' , 1) ,  {
+        var url = URLS.BUNDLE.BY_ID.replace(':id' , 1);
+        if (this.filterStage != "null") {
+          var arr = [];
+          arr.push(this.filterStage);
+          console.log(arr);
+          url = url + "?stage=" + JSON.stringify(arr);
+        }
+        HTTP.get( url,  {
           headers: {
             Authorization: localStorage.getItem("token")
           }
         })
         .then(function(res) {
           const d = res.data.data;
+          if (d === null) {
+            ctx.bundle = [];
+            ctx.videos = [];
+            ctx.images = [];
+            ctx.documents = [];
+            ctx.showFilters = false;
+            NotificationsController.hideActivityIndicator();
+            return;
+          }
           ctx.bundle = d;
           ctx.videos = [];
           ctx.images = [];
@@ -223,12 +349,19 @@ var NotificationsController = require("../components/NotificationsController.js"
               ctx.documents.push(file);
             }
           });
+          ctx.showFilters = false;
           NotificationsController.hideActivityIndicator();
         })
         .catch(function(error) {
           NotificationsController.hideActivityIndicator();
           NotificationsController.showErrorNotification(error);
         });
+      },
+      clearStages: function(){
+        this.filterStage = "null";
+        this.showFilters = false;
+        this.getTrainingData();
+
       }
 		},
     mounted() {
@@ -237,7 +370,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   }
 </script>
 
-<style lang="css">
+<style lang="css" scoped>
 .training{
 	width: calc(100vw - 40px);
 	height: auto;
@@ -257,7 +390,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 .training .top .pageDesc{
   width: calc(100% - 120px);
-	color: white;
+	color: black;
 	font-size: 18px;
 	font-family: 'Thin';
   text-align: left;
@@ -288,10 +421,10 @@ var NotificationsController = require("../components/NotificationsController.js"
 	line-height: 50px;
 	font-size: 20px;
 	font-weight: bold;
-	color: white;
+	color: black;
 	font-family: 'Bold';
 	text-align: left;
-	border-bottom: 0.5px solid #4E08F0;
+	border-bottom: 0.5px solid black;
 	margin-top: 20px;
 }
 
@@ -367,5 +500,49 @@ var NotificationsController = require("../components/NotificationsController.js"
   bottom: 100px;
 }
 
+.icon{
+	width: 30px;
+	height: 30px;
+}
 
+input[type="checkbox"] {
+ /* remove standard background appearance */
+ -webkit-appearance: none;
+ -moz-appearance: none;
+ /* create custom radiobutton appearance */
+ display: inline-block;
+ width: 25px;
+ height: 25px;
+ padding: 4px;
+ /* background-color only for content */
+ background-clip: content-box;
+ border: 2px solid #bbbbbb;
+ background-color: #e7e6e7;
+
+	outline: none;
+  margin-right: 10px;
+  border-radius: 50%;
+}
+
+input[type="checkbox"]:checked {
+  background-color: red;
+}
+
+.stagesNotice{
+  color: white;
+  font-size: 18px;
+}
+
+
+.stageName{
+  text-transform: capitalize;
+  color : white;
+  font-weight : bold;
+  font-size : 20px;
+  font-family: 'ExtraBold';
+  background: #4E08F0;
+  padding: 2px 6px 2px 6px;
+  border-radius: 4px;
+
+}
 </style>

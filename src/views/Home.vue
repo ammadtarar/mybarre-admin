@@ -6,6 +6,9 @@
     display: flex;
     flex-direction: column;
 }
+.company_icon{
+  width: 150px;
+}
 
 .navBar {
     width: calc(100% - 40px);
@@ -17,6 +20,7 @@
     justify-content: center;
     z-index: 2;
     box-shadow: 0px 0px 10px 0px #1b2a3f;
+    background: #fce4ec;
 }
 
 .icon {
@@ -26,14 +30,13 @@
 .btnsContainer {
     display: flex;
     flex-direction: row;
-    margin-left: 50px;
     justify-content: space-between;
 }
 
 .navBtn {
     padding-left: 10px;
     padding-right: 10px;
-    color: white;
+    color: gray;
     font-size: 16px;
     font-family: medium;
     transition: all 0.25s;
@@ -47,14 +50,14 @@
 }
 
 .navBtn:hover {
-    border-bottom: 2px solid #4E08F0;
+    border-bottom: 2px solid black;
 }
 
 .btLogout {
     padding-left: 10px;
     padding-right: 10px;
     color: white;
-    background: #4E08F0;
+    background: black;
     font-size: 16px;
     font-family: medium;
     transition: all 0.25s;
@@ -84,13 +87,14 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-end;
-  border-right: 4px solid #4E08F0;
+  border-right: 4px solid black;
+  padding-right: 8px;
 
 }
 
 .admin .name{
   font-size: 14px;
-  color: white;
+  color: black;
   font-family: 'Bold';
   display: flex;
   flex-direction: row;
@@ -105,7 +109,7 @@
 }
 .admin .email{
   font-size: 12px;
-  color: white;
+  color: black;
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -125,7 +129,9 @@
 }
 
 .btnSelected {
-    border-bottom: 2px solid #4E08F0;
+    border-bottom: 2px solid black;
+    color: black;
+    font-family: Bold;
 }
 
 .navIcon {
@@ -160,6 +166,7 @@
     overflow: scroll;
     padding-left: 20px;
     padding-right: 20px;
+    padding-top: 20px;
     text-align: center;
 }
 
@@ -170,7 +177,7 @@
 <div class="home">
 
     <div class="navBar">
-        <img src="../assets/mybarree_transparent_logo_white.png" class="icon">
+        <img src="../assets/mybarree_transparent_logo.png" class="company_icon">
         <div class="btnsContainer">
 
 
@@ -211,7 +218,10 @@
             <ce v-if="lvOneIndex === 4 && lvTwoIndex === 1" :id="bundleId" @hideBundleDetail="hideBundleDetail" />
 
             <store v-if="lvOneIndex === 5" />
-            <settings v-if="lvOneIndex === 6"/>
+            <coupons v-if="lvOneIndex === 6" />
+
+
+            <settings v-if="lvOneIndex === 7"/>
 
 
         </div>
@@ -234,6 +244,7 @@ import Celist from '../components/celist.vue';
 import Ce from '../components/ce.vue';
 import Store from '../components/store.vue';
 import User from '../components/user.vue';
+import Coupons from '../components/coupons.vue';
 import Settings from '../components/settings.vue';
 export default {
     name: 'home',
@@ -246,6 +257,7 @@ export default {
         Ce,
         Store,
         User,
+        Coupons,
         Settings
     },
     data() {
@@ -294,6 +306,12 @@ export default {
                 icon: require("@/assets/ic_store.png")
             },{
                 index: 6,
+                path: "coupons",
+                name: "Coupons",
+                selected: false,
+                icon: require("@/assets/ic_coupons.png")
+            },{
+                index: 7,
                 path: "settings",
                 name: "Settings",
                 selected: false,

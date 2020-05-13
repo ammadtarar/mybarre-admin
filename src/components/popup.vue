@@ -46,15 +46,15 @@
 
 .pos{
 	/* background: #4E08F0; */
-	color: #4E08F0;
-	border: 2px solid #4E08F0;
+	color: #e91e63;
+	border: 2px solid #e91e63;
 	font-family: black;
 	margin-left: 10px;
-	background: #EDE7F6;
+	background: transparent;
 }
 
 .pos:hover{
-	background: #4E08F0;
+	background: #e91e63;
 	color: white;
 	box-shadow: 0px 0px 4px 4px lightgray;
 }

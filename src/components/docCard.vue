@@ -5,9 +5,7 @@
       <label class="type">{{getFileType(model.mime) || 'FILE'}}</label>
 			<label class="name">{{model.name}}</label>
 		</div>
-		<div class="btn" @click="showPreview">
-			<span>PREVIEW</span>
-		</div>
+
   </div>
 </template>
 

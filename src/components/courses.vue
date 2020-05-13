@@ -14,7 +14,7 @@
 
 
       <a class="bt_container" @click="type = 'create' ; showAddModal = true">
-        <img class="icon" src="../assets/ic_add.png">
+        <img class="icon" src="../assets/ic_add_white.png">
         Add New Course
       </a>
     </div>
@@ -23,33 +23,37 @@
     <thead>
       <tr >
         <th  style="width : 2">ID</th>
-        <th  style="width : 20">NAME</th>
-        <th  style="width : 12%">START</th>
-        <th  style="width : 12%">END</th>
-        <th  style="width : 13%">PRICE</th>
-        <th  style="width : 14%">MEMBERSHIPS</th>
-        <th  style="width : 12%">SEATS</th>
-        <th  style="width : 15%">ACTIONS</th>
+        <th  style="width : 15">NAME</th>
+        <th  style="width : 15%">TIME</th>
+        <th  style="width : 20%">VENUE</th>
+        <th  style="width : 10%">PRICE</th>
+        <th  style="width : 10%">LICENSE FEE</th>
+        <th  style="width : 18%">ACTIONS</th>
       </tr>
     </thead>
     <tbody>
       <tr  v-bind:key="course.id" v-for="course in courses">
         <td >{{course.id || 'N/A'}}</td>
         <td >{{course.name || 'N/A'}}</td>
-        <td >{{course.start || 'N/A'}}</td>
-        <td >{{course.end || 'N/A'}}</td>
+        <td >{{course.start || 'N/A'}} - {{course.end || 'N/A'}}</td>
+        <td >{{course.venue || 'N/A'}}</td>
         <td >{{course.price || 'N/A'}}</td>
-        <td >{{course.memberships.length || 0}}</td>
-        <td >{{course.seats || 'N/A'}}</td>
-        <td style="text-align : left">
+        <td >{{course.license_fee || 'N/A'}}</td>
+        <td style="text-align : center">
+
+
+          <button
+              class="btAction green"
+              @click="downloadUserList(course)"
+            >DOWNLOAD USERS LIST</button>
 
             <button
-                class="btAction purple"
+                class="btAction green"
                 @click="showDetail(course.id)"
               >DETAILS</button>
 
               <button
-                  class="btAction purple"
+                  class="btAction green"
                   @click="showCheckInQe(course)"
                 >CHECK IN QR</button>
             <button
@@ -97,6 +101,12 @@
 
 	        <label class="inputTitle spacing30">Price in RMB</label>
 	        <input type="number" v-model="course.price" placeholder="Enter course price" class="textInput" />
+
+          <label class="inputTitle spacing30">License Fee in RMB</label>
+	        <input type="number" v-model="course.license_fee" placeholder="Enter license fee" class="textInput" />
+
+          <label class="inputTitle spacing30">Venue</label>
+          <input v-model="course.venue" placeholder="Enter the venue for this course" class="textInput" />
 
 	        <label class="inputTitle spacing30">Start Time</label>
 	        <input type="date" v-model="course.start" placeholder="Enter a name for this course" class="textInput" />
@@ -153,6 +163,9 @@
          <label class="inputTitle spacing30">Seats Count</label>
          <input type="number" v-model="editableCourse.seats" placeholder="Enter seats count" class="textInput" />
 
+         <label class="inputTitle spacing30">Venue</label>
+         <input v-model="editableCourse.venue" placeholder="Enter the venue for this course" class="textInput" />
+
          <label class="inputTitle spacing30">Price in RMB</label>
          <input
           type="number"
@@ -162,9 +175,30 @@
           class="textInput"
           :disabled="editableCourse.memberships.length > 0"
           />
+
           <label style="color : #fec60a; font-family : 'Bold'; font-size : 12px;" v-if="editableCourse.memberships.length > 0">
             Cannot change price for this course. This course already has
-            <b style="color : #4E08F0; font-family : 'Black'; font-size : 18px;">{{editableCourse.memberships.length}}</b>
+            <b style="color : #e91e63; font-family : 'Black'; font-size : 18px;">{{editableCourse.memberships.length}}</b>
+             membership(s)
+          </label>
+
+          <label class="inputTitle spacing30">License Fee in RMB</label>
+          <input
+           type="number"
+           v-bind:class="{ disabledInput : editableCourse.memberships.length > 0 }"
+           v-model="editableCourse.license_fee"
+           placeholder="Enter license fee"
+           class="textInput"
+           :disabled="editableCourse.memberships.length > 0"
+           />
+
+
+
+
+
+          <label style="color : #fec60a; font-family : 'Bold'; font-size : 12px;" v-if="editableCourse.memberships.length > 0">
+            Cannot change price for this course. This course already has
+            <b style="color : #e91e63; font-family : 'Black'; font-size : 18px;">{{editableCourse.memberships.length}}</b>
              membership(s)
           </label>
 
@@ -256,6 +290,34 @@ import VueQr from 'vue-qr'
       VueQr
 		},
 		methods : {
+      downloadUserList(course){
+        if (course === null || course === undefined) {
+          NotificationsController.showNotification('danger' , 'Course is null');
+          return
+        }
+
+        NotificationsController.showActivityIndicator();
+        const ctx = this;
+        HTTP.get(URLS.COURSE.REPORT.replace(':id' , course.id) , {
+            headers: {
+              Authorization: localStorage.getItem("token")
+            },
+            responseType : 'blob'
+          })
+            .then(function(res) {
+              const url = window.URL.createObjectURL(new Blob([res.data]));
+              const link = document.createElement('a');
+              link.href = url;
+              link.setAttribute('download', 'MYbarre-course-'+ course.name +'users-list.xls');
+              document.body.appendChild(link);
+              link.click();
+              NotificationsController.hideActivityIndicator();
+            })
+            .catch(function(error) {
+              NotificationsController.hideActivityIndicator();
+              NotificationsController.showErrorNotification(error.response.statusText);
+            });
+      },
       hideQrModal(){
         this.qrDataUrl = ""; this.qrStr = ""; this.checkinModel = null; this.displayCheckInQrModal = false;
       },

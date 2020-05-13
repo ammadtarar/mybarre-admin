@@ -96,14 +96,14 @@ import Order from "./order.vue";
 	height: 50px;
 	line-height: 50px;
 	font-size: 16px;
-	color: white;
+	color: black;
 	padding-left: 10px;
 	padding-right: 10px;
 	float: left;
 }
 
 .storePage .top .active{
-	border-bottom: 1px solid #4E08F0;
+	border-bottom: 1px solid black;
 	font-family: 'Bold'
 }
 

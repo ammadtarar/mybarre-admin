@@ -3,17 +3,47 @@
 		<div class="emailsCard" v-if="!isEditing">
 
 			<div class="titleCont">
-					<label class="cardTitle">EMAIL NOTIFCATIONS SETTINGS</label>
+					<label class="cardTitle">SETTINGS</label>
 					<div class="btsCont">
-						<div class="edit" @click="isEditing = true">
+						<div class="btAction orange" @click="isEditing = true">
 							EDIT
 						</div>
 					</div>
 			</div>
 
+      <div class="filedCont">
+				<div class="lrCont">
+					<div class="dot">
+					</div>
+					<label class="l">Shanghai Parcel Tariff (¥):</label>
+					<label class="r">{{shanghai_parcel_tariff}}</label>
+				</div>
+				<label class="notice">MYbarre manual fee that will be charged when user registers with MYbarre.</label>
+			</div>
+
+      <div class="filedCont">
+				<div class="lrCont">
+					<div class="dot">
+					</div>
+					<label class="l">Outside Shanghai Parcel Tariff (¥):</label>
+					<label class="r">{{outside_shanghai_parcel_tariff}}</label>
+				</div>
+				<label class="notice">MYbarre manual fee that will be charged when user registers with MYbarre.</label>
+			</div>
 
 
-			<div class="filedCont">
+      <div class="filedCont">
+				<div class="lrCont">
+					<div class="dot">
+					</div>
+					<label class="l">MYbarre Manual Fee (¥):</label>
+					<label class="r">{{manual_fee}}</label>
+				</div>
+				<label class="notice">MYbarre manual fee that will be charged when user registers with MYbarre.</label>
+			</div>
+
+
+		<div class="filedCont" style="margin-top : 10px">
 				<div class="lrCont">
 					<div class="dot">
 					</div>
@@ -52,16 +82,48 @@
 			<div class="titleCont">
 					<label class="cardTitle">EMAIL NOTIFCATIONS SETTINGS</label>
 					<div class="btsCont">
-						<div class="edit" @click="updateXonfigs">
+						<div class="btAction green" @click="updateXonfigs">
 							SAVE
 						</div>
 
-						<div class="edit" @click="clearForm">
+						<div class="btAction red" @click="clearForm">
 							CANCEL
 						</div>
 					</div>
 			</div>
 
+      <div class="filedCont">
+				<div class="lrCont">
+					<div class="dot">
+					</div>
+					<label class="l">Shanghai Parcel Tariff (¥):</label>
+					<input class="r" type="number"  v-model="form.shanghai_parcel_tariff"></input>
+				</div>
+				<label class="notice">This is the shipping fee that will be charged on orders for users based in Shanghai</label>
+			</div>
+
+
+      <div class="filedCont">
+				<div class="lrCont">
+					<div class="dot">
+					</div>
+					<label class="l">Outside Shanghai Parcel Tariff (¥):</label>
+					<input class="r" type="number"  v-model="form.outside_shanghai_parcel_tariff"></input>
+				</div>
+				<label class="notice">This is the shipping fee that will be charged on orders for users based outside Shanghai</label>
+			</div>
+
+
+
+      <div class="filedCont">
+				<div class="lrCont">
+					<div class="dot">
+					</div>
+					<label class="l">MYbarre Manual Fee (¥):</label>
+					<input class="r" type="number"  v-model="form.manual_fee"></input>
+				</div>
+				<label class="notice">MYbarre manual fee that will be charged when user registers with MYbarre.</label>
+			</div>
 
 
 			<div class="filedCont">
@@ -109,6 +171,9 @@ const NotificationsController = require("../components/NotificationsController.j
 			 isEditing: false,
 			 video_emails_notifications_days_in_advance: 40,
 			 video_emails_notifications_frequency_days: 10,
+       manual_fee : 0,
+       shanghai_parcel_tariff: 15,
+       outside_shanghai_parcel_tariff: 30,
        form : {}
 		 };
 	 },
@@ -121,6 +186,9 @@ const NotificationsController = require("../components/NotificationsController.j
         this.isEditing = false;
         this.form.video_emails_notifications_days_in_advance  = this.video_emails_notifications_days_in_advance;
         this.form.video_emails_notifications_frequency_days  = this.video_emails_notifications_frequency_days;
+        this.form.shanghai_parcel_tariff  = this.shanghai_parcel_tariff;
+        this.form.outside_shanghai_parcel_tariff  = this.outside_shanghai_parcel_tariff;
+        this.form.manual_fee = this.manual_fee;
       },
       getConfigs(){
         const ctx = this;
@@ -134,6 +202,9 @@ const NotificationsController = require("../components/NotificationsController.j
               const response = res.data.data;
               ctx.video_emails_notifications_days_in_advance  = response.video_emails_notifications_days_in_advance;
               ctx.video_emails_notifications_frequency_days  = response.video_emails_notifications_frequency_days;
+              ctx.manual_fee = response.manual_fee;
+              ctx.shanghai_parcel_tariff = response.shanghai_parcel_tariff;
+              ctx.outside_shanghai_parcel_tariff = response.outside_shanghai_parcel_tariff;
               ctx.clearForm();
             })
             .catch(function(error) {
@@ -175,6 +246,7 @@ const NotificationsController = require("../components/NotificationsController.j
 	overflow-y: scroll;
 	margin-top: 30px;
 	transition: all 0.5s;
+  padding: 10px;
 }
 .emailsCard{
 	width: calc(100% - 40px);
@@ -184,6 +256,7 @@ const NotificationsController = require("../components/NotificationsController.j
 	border-radius: 8px;
 	display: flex;
 	flex-direction: column;
+  box-shadow: 0px 0px 10px 0px #BDBDBD;
 }
 
 .titleCont{
@@ -205,8 +278,8 @@ const NotificationsController = require("../components/NotificationsController.j
 	height: 30px;
 	line-height: 30px;
 	background: transparent;
-	color: #4E08F0;
-	border: 2px solid #4E08F0;
+	color: #e91e63;
+	border: 2px solid #e91e63;
 	border-radius: 4px;
 	font-size: 14px;
 	font-family: 'Bold';
@@ -216,7 +289,7 @@ const NotificationsController = require("../components/NotificationsController.j
 
 .edit:hover{
 	font-family: 'ExtraBold';
-	background: #4E08F0;
+	background: #e91e63;
 	color: white;
 	font-size: 16px;
 	padding-left: 20px;
@@ -226,7 +299,7 @@ const NotificationsController = require("../components/NotificationsController.j
 
 .cardTitle{
 	text-align: left;
-	color: #4E08F0;
+	color: black;
 	font-family: 'ExtraBold';
 	font-size: 18px;
 	line-height: 20px;
@@ -248,7 +321,7 @@ const NotificationsController = require("../components/NotificationsController.j
 .lrCont .dot{
 	width: 10px;
 	height: 10px;
-	background: #4E08F0;
+	background: #e91e63;
 	border-radius: 5px;
 	margin-right: 10px;
 }

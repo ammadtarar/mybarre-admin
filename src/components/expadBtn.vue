@@ -46,10 +46,10 @@
  line-height: 50px;
  font-size: 20px;
  font-weight: bold;
- color: white;
+ color: black;
  font-family: 'Bold';
  text-align: left;
- border-bottom: 2px solid #4E08F0;
+ border-bottom: 2px solid black;
 
  display: flex;
  flex-direction: row;
@@ -68,10 +68,11 @@
 	padding-top: 4px;
 	padding-left: 2px;
 	padding-right: 2px;
+  border: 2px solid black;
 }
 
 .expandBtn:hover{
-	background: #4E08F0;
+	background: #fce4ec;
 }
 
 .up{

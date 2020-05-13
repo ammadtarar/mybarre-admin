@@ -2,8 +2,8 @@
   <div class="order" v-if="membership">
 
     <div class="top">
-      <img src="../assets/ic_back.png" class="goBack" @click="goBack">
-      <label class="pageDesc" style="font-family : 'Bold' ; font-size : 24px">Membership Detail</label>
+      <img src="../assets/ic_left_black.png" class="goBack" @click="goBack">
+      <label class="pageDesc" style="font-family : 'Bold' ; font-size : 24px">Training Detail</label>
     </div>
 
 
@@ -12,24 +12,24 @@
 			<expandBtn title="Student Information" @onToggle="expandUserInfo = $event"/>
 
 			<div class="actions_cont">
-				<div class="action_btn" @click="displayExtendModal">
-					Extend Videos Submission Date
+				<div class="btAction btActionCentered orange" @click="displayExtendModal">
+          EXTEND VIDEO SUBMISSION DATE
 				</div>
 
-				<div class="action_btn" @click="displayMoveToCourseModal">
-					Move to Another Course
+				<div class="btAction btActionCentered orange" @click="displayMoveToCourseModal">
+          MOVE TO ANOTHER COURSE
 				</div>
 
-				<div class="action_btn" @click="showUpdateStatusModal = true">
-					Update  Status
+				<div class="btAction btActionCentered orange" @click="showUpdateStatusModal = true">
+          UPDATE STATUS
 				</div>
 
-				<div class="action_btn" @click="showUploadLicenseModal = true">
-					Upload Certificate
+				<div class="btAction btActionCentered green" @click="showUploadLicenseModal = true">
+          UPLOAD CERTIFICATE
 				</div>
 
-				<div class="action_btn" v-if="membership.certificate_url" @click="showCertificate()">
-					View Certificate
+				<div class="btAction btActionCentered purple" v-if="membership.certificate_url" @click="showCertificate()">
+          VIEW CERTIFICATE
 				</div>
 
 			</div>
@@ -43,8 +43,8 @@
 
       <div class="half-half" >
         <div class="keyValCont">
-          <label class="key">Name</label>
-          <label class="val">{{membership.user.name || 'N/A'}}</label>
+          <label class="key">First Name / Family Name / Nickname</label>
+          <label class="val">{{membership.user.first_name || 'N/A'}} / {{membership.user.last_name || 'N/A'}} / {{membership.user.nickname || 'N/A'}}</label>
         </div>
         <div class="keyValCont">
           <label class="key">Birthday</label>
@@ -93,14 +93,27 @@
         </div>
       </div>
 
+
+
       <div class="half-half" >
         <div class="keyValCont">
-          <label class="key">Price Paid</label>
-          <label class="val">{{membership.price || 'N/A'}}</label>
+          <label class="key">Amount Paid</label>
+          <label class="val">¥{{membership.price}}</label>
         </div>
         <div class="keyValCont">
           <label class="key">Wechat Payment Out-Trade-No</label>
           <label class="val">{{membership.out_trade_no || 'N/A'}}</label>
+        </div>
+      </div>
+
+      <div class="half-half" >
+        <div class="keyValCont">
+          <label class="key">Was Coupon Redeemed</label>
+          <label class="val">{{membership.coupon ? 'Yes' : 'No'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Coupon Name / Coupon Value</label>
+          <label class="val">{{membership.coupon ? getCouponInfo(membership.coupon) : 'N/A'}}</label>
         </div>
       </div>
 
@@ -332,6 +345,22 @@ var NotificationsController = require("../components/NotificationsController.js"
 		 };
 	 },
 		methods:{
+      getCouponInfo(coupon){
+        if (!coupon) {
+          return 'N/A';
+        }
+
+        const type = coupon.type;
+        const value = coupon.value;
+        var str = "";
+        if (type === 'percentage') {
+          str =  value + "% Discount";
+        }else{
+          str =  '¥' + value + " Discount";
+        }
+
+        return coupon.name + " / " + str
+      },
       showCertificate(){
         this.$root.$emit('showImage' , {
           url : this.membership.certificate_url
@@ -625,7 +654,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 100px;
   text-align: center;
   font-size: 14px;
-  color: white;
+  color: #e91e63;
 }
 
 .tripleKeyValCont:nth-of-type(2){
@@ -663,7 +692,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 20px;
   font-family: 'Thin';
   font-size: 14px;
-  color: white;
+  color: black;
   text-align: left;
 }
 
@@ -673,7 +702,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 40px;
   font-family: 'Medium';
   font-size: 16px;
-  color: white;
+  color: black;
   text-align: left;
   border-bottom: 0.5px solid #424242;
 }
@@ -696,7 +725,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 .order .top .pageDesc{
   width: calc(100% - 120px);
-	color: white;
+	color: black;
 	font-size: 18px;
 	font-family: 'Thin';
   text-align: left;

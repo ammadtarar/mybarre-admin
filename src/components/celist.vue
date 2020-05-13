@@ -19,7 +19,7 @@
 
 
 						<a class="bt_container" @click="showAddModal = true">
-							<img class="icon" src="../assets/ic_add.png">
+							<img class="icon" src="../assets/ic_add_white.png">
 							Add New Bundle
 						</a>
 					</div>
@@ -48,7 +48,7 @@
 							<td>
 								<a @click="showBundleDetail(user)">
 									<button
-										class="btAction purple"
+										class="btAction green"
 									>DETAILS</button>
 								</a>
 

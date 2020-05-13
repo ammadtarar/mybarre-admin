@@ -19,7 +19,7 @@
 
 
 						<a class="bt_container" @click="type = 'create' ; showAddModal = true">
-							<img class="icon" src="../assets/ic_add.png">
+							<img class="icon" src="../assets/ic_add_white.png">
 							Add New Product
 						</a>
 					</div>
@@ -33,11 +33,13 @@
 		      <thead>
 		        <tr >
 							<th  style="width : 2">ID</th>
-		          <th  style="width : 20">NAME</th>
-		          <th  style="width : 25%">DESCRIPTION</th>
-		          <th  style="width : 13%">PRICE</th>
-							<th  style="width : 13%">PIECES IN STOCK</th>
-							<th  style="width : 12%">STATUS</th>
+		          <th  style="width : 13">NAME</th>
+		          <th  style="width : 15%">DESCRIPTION</th>
+		          <th  style="width : 10%">PRICE</th>
+							<th  style="width : 10%">PIECES IN STOCK</th>
+							<th  style="width : 10%">STATUS</th>
+							<th  style="width : 12.5%">COLORS</th>
+							<th  style="width : 12.5%">SIZES</th>
 							<th  style="width : 15%">ACTIONS</th>
 		        </tr>
 		      </thead>
@@ -45,16 +47,34 @@
 		        <tr  v-bind:key="user.id" v-for="user in applicants">
 							<td >{{user.id || 'N/A'}}</td>
 							<td >{{user.name || 'N/A'}}</td>
-		          <td >{{user.description || 'N/A'}}</td>
+		          <td style="max-height : 60px; line-height: 20px; overflow : hidden">{{user.description || 'N/A'}}</td>
 							<td >{{user.price || 'N/A'}}</td>
 							<td >{{user.count || 'N/A'}}</td>
 							<td >{{user.status ? user.status.toUpperCase() : 'N/A' || 'N/A'}}</td>
+
+							<td style="padding : 10px">
+								<div class="simpleTagsContainer">
+									<div class="tag" v-for="item in user.colors">
+										{{item.name_en}} | {{item.name_zh}}
+									</div>
+								</div>
+							</td>
+
+							<td style="padding : 10px">
+								<div class="simpleTagsContainer">
+									<div class="tag" v-for="item in user.colors">
+										{{item.name_en}} | {{item.name_zh}}
+									</div>
+								</div>
+							</td>
+
+
 							<td>
 								<button @click="previewImage(user)"
-										class="btAction purple"
+										class="btAction green"
 									>PREVIEW IMAGE</button>
 								<button @click="editProduct(user)"
-										class="btAction purple"
+										class="btAction orange"
 									>EDIT</button>
 								<button
 								@click="displayDeleteModal(user)"
@@ -101,9 +121,10 @@
 					</div>
 			</modal>
 
-			<modal v-if="showAddModal"  @close="showAddModal = false" size="size">
+			<modal v-if="showAddModal"  @close="showAddModal = false" size="big">
 					<h3 slot="header" style="text-align : left;">{{type === 'create' ? 'Add New Product ...' : 'Edit Product ...'}}</h3>
 					<div slot="body" class="modalBody">
+
 						<label class="inputTitle spacing30">Name</label>
 						<input type="text" v-model="form.name" placeholder="Enter a name here" class="textInput" style="width : 100%"/>
 
@@ -115,6 +136,36 @@
 
 						<label class="inputTitle spacing30">DESCRIPTION</label>
 						<textarea type="text"  v-model="form.description" placeholder="Enter some description about the product here" class="descText"  />
+
+						<div class="titleActionContainer">
+								<label class="inputTitle spacing30" style="width : auto !important">Colors</label>
+								<div class="btAction purple" style="margin-top : 30px; width : 100px;text-align : center; margin-left : 10px" @click="showAddColorModal = true">
+									Add New
+								</div>
+						</div>
+						<div class="atttsTagsContainer">
+							<div class="tagContainer" v-for="item in form.colors">
+								<div class="tag">
+									{{item.name_en}} | {{item.name_zh}}
+								</div>
+								<img class="remove" src="../assets/ic_close_white.png" @click="removeColor(item)"></img>
+							</div>
+						</div>
+
+						<div class="titleActionContainer">
+								<label class="inputTitle spacing30" style="width : auto !important">Sizes</label>
+								<div class="btAction purple" style="margin-top : 30px; width : 100px;text-align : center; margin-left : 10px" @click="showAddSizeModal = true">
+									Add New
+								</div>
+						</div>
+						<div class="atttsTagsContainer">
+							<div class="tagContainer" v-for="item in form.sizes">
+								<div class="tag">
+									{{item.name_en}} | {{item.name_zh}}
+								</div>
+								<img class="remove" src="../assets/ic_close_white.png" @click="removeColor(item)"></img>
+							</div>
+						</div>
 
 						<label class="inputTitle spacing30">IMAGE</label>
 						<img  v-if="!url" src="../assets/image_placeholder.jpg" class="imgPreviewSmall">
@@ -136,6 +187,59 @@
 			</modal>
 
 			<FilesUploadModal v-if="showFilesModal" @uploadSuccess="filesUploadSuccess" :bundleId='newBundle.id'/>
+
+
+			<modal v-if="showAddColorModal"  @close="showAddColorModal = false" size="small">
+
+					<h3 slot="header" style="text-align : left;">Add New Color</h3>
+
+
+					<div slot="body" class="modalBody">
+
+						<label class="inputTitle spacing30">Name In English</label>
+						<input type="text" v-model="color.name_en" placeholder="Enter color name in english here" class="textInput" style="width : 100%"/>
+
+						<label class="inputTitle spacing30">Name in Mandarin</label>
+						<input type="text" v-model="color.name_zh" placeholder="Enter color name in mandarin here" class="textInput" style="width : 100%"/>
+
+					</div>
+
+
+					<div class="buttonsWrapper" slot="footer">
+						<div class="bottonsContainer" style="width : 100% !important">
+							<button type="button" class="bt neg" @click="showAddColorModal = false ">Abort</button>
+							<button type="button" class="bt pos" @click="addColor">Add</button>
+						</div>
+					</div>
+
+			</modal>
+
+
+
+			<modal v-if="showAddSizeModal"  @close="showAddSizeModal = false" size="small">
+
+					<h3 slot="header" style="text-align : left;">Add Size Color</h3>
+
+
+					<div slot="body" class="modalBody">
+
+						<label class="inputTitle spacing30">Name In English</label>
+						<input type="text" v-model="size.name_en" placeholder="Enter size name in english here" class="textInput" style="width : 100%"/>
+
+						<label class="inputTitle spacing30">Name in Mandarin</label>
+						<input type="text" v-model="size.name_zh" placeholder="Enter size name in mandarin here" class="textInput" style="width : 100%"/>
+
+					</div>
+
+
+					<div class="buttonsWrapper" slot="footer">
+						<div class="bottonsContainer" style="width : 100% !important">
+							<button type="button" class="bt neg" @click="showAddSizeModal = false ">Abort</button>
+							<button type="button" class="bt pos" @click="addSize">Add</button>
+						</div>
+					</div>
+
+			</modal>
 
     </div>
 </template>
@@ -177,21 +281,67 @@ var NotificationsController = require("../components/NotificationsController.js"
 				url: null,
 				imgFile :null,
 				type : 'create',
-				updateId : -1
+				updateId : -1,
+				showAddColorModal: false,
+				color : {},
+				size : {},
+				showAddSizeModal : false
 	    };
 	  },
 		methods:{
+			removeColor(item){
+				this.form.colors.splice(this.colors.indexOf(item),1)
+			},
+			addColor(){
+				if (!this.color.name_en) {
+					NotificationsController.showNotification('warning' , 'Please enter color name in english');
+					return;
+				}
+				if (!this.color.name_zh) {
+					NotificationsController.showNotification('warning' , 'Please enter color name in mandarin');
+					return;
+				}
+				if (this.form.colors === undefined) {
+					this.form.colors = [];
+				}
+				this.form.colors.push(this.color);
+				this.showAddColorModal = false;
+				this.color = {};
+			},
+			removeSize(item){
+				this.form.sizes.splice(this.sizes.indexOf(item),1)
+			},
+			addSize(){
+				if (!this.size.name_en) {
+					NotificationsController.showNotification('warning' , 'Please enter size name in english');
+					return;
+				}
+				if (!this.size.name_zh) {
+					NotificationsController.showNotification('warning' , 'Please enter size name in mandarin');
+					return;
+				}
+				if (this.form.sizes === undefined) {
+					this.form.sizes = []
+				}
+				this.form.sizes.push(this.size);
+				this.showAddSizeModal = false;
+				this.size = {};
+			},
 			previewImage(product){
 				this.$root.$emit('showImage' , {url  : product.thumbnail_url});
 			},
 			editProduct(product){
 				this.type = 'edit';
 				this.updateId = product.id;
+
+
 				this.form = {
 					name : product.name ,
 					price : product.price ,
 					description : product.description ,
-					count : product.count
+					count : product.count,
+					sizes : product.sizes,
+					colors : product.colors
 				};
 				this.url = product.thumbnail_url;
 				this.showAddModal = true;
@@ -294,6 +444,8 @@ var NotificationsController = require("../components/NotificationsController.js"
 							ctx.imgFile = null;
 							ctx.updateId = -1;
 							ctx.url = null;
+							ctx.color = {};
+							ctx.size = {};
 							ctx.getUsers();
 							NotificationsController.hideActivityIndicator();
 							NotificationsController.showNotification('success' , 'Product updated successfully')
@@ -317,6 +469,8 @@ var NotificationsController = require("../components/NotificationsController.js"
 							ctx.form = {};
 							ctx.url = null;
 							ctx.imgFile = null;
+							ctx.color = {};
+							ctx.size = {};
 							ctx.getUsers();
 							NotificationsController.hideActivityIndicator();
 							NotificationsController.showNotification('success' , 'Product created successfully')
@@ -420,5 +574,102 @@ var NotificationsController = require("../components/NotificationsController.js"
 	background: #4E08F0;
 	color: white;
 }
+
+.halfHalf-container{
+	width: 100%;
+	height: auto;
+	display: flex;
+	flex-direction: row;
+}
+
+.halfHalf-container .half{
+	width: 49%;
+	height: auto;
+	display: flex;
+	flex-direction: column;
+}
+
+.titleActionContainer{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+}
+
+.btAddNew{
+	width: 100px;
+	text-align: center;
+	height: 30px;
+	line-height: 30px;
+	background: red;
+	margin-top: 30px;
+	margin-left: 10px;
+}
+
+.atttsTagsContainer{
+	min-height: 30px;
+	display: inline-block;
+	border-bottom: 0.5px solid gray;
+	margin-top: 10px;
+}
+
+.atttsTagsContainer .tagContainer{
+	display: flex;
+	flex-direction: row;
+	background: #e91e63;
+	padding: 4px 6px 4px 30px;
+	border-radius: 20px;
+	margin-bottom: 10px;
+	float: left;
+	margin-right: 10px;
+	align-items: center
+
+}
+
+.atttsTagsContainer .tagContainer .remove{
+	margin-left: 10px;
+	width: 30px;
+	height: 30px;
+	border: 1px solid white;
+	border-radius: 20px;
+	transition: 0.3s all;
+}
+
+
+.atttsTagsContainer .tagContainer .remove:hover{
+	background: red;
+}
+
+
+.atttsTagsContainer .tagContainer .tag{
+	font-size: 14px;
+	color: white;
+	margin-right: 4px;
+
+}
+
+.tagsWrapper{
+	width: 100%;
+	height: 100%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.simpleTagsContainer{
+	display: inline-block;
+}
+
+.simpleTagsContainer .tag{
+	font-size: 12px;
+	font-weight: bold;
+	padding: 4px 8px 4px 8px;
+	margin-right: 4px;
+	margin-bottom: 4px;
+	background: #e91e63;
+	color: white;
+	float: left;
+	border-radius: 100px;
+}
+
+
 
 </style>

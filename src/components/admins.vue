@@ -205,8 +205,7 @@ thead th {
 }
 
 thead{
-
-	color: ##031b4e;
+	color: #031b4e;
 	font-size: 18px;
 	position: sticky;
 	top: 0;
@@ -214,8 +213,8 @@ thead{
 
 }
 th{
-	height: 75px;
-	font-family: ExtraBold;
+	height: 50px;
+	font-family: Medium
 }
 
 
@@ -224,7 +223,7 @@ table tr:nth-child(odd) td{
 		height: 50px;
 }
 table tr:nth-child(even) td{
-    background: #F5F5F5;
+    background: #EEEEEE;
 		height: 50px;
 }
 

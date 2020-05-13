@@ -113,7 +113,7 @@
 
 .card .btn .play:hover{
 	padding: 2px;
-	background: #4E08F0;
+	background: #e91e63;
 }
 
 </style>

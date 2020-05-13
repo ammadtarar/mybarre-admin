@@ -111,8 +111,8 @@
 
 
 .card .btn > span:hover{
-  background: #4E08F0;
-  border: 1px solid #4E08F0;
+  background: #e91e63;
+  border: 1px solid #e91e63;
 }
 
 </style>

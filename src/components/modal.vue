@@ -75,7 +75,7 @@ mounted() {
 }
 
 .modal-header h3 {
-  color: #4E08F0;
+  color: #e91e63;
 	font-size: 26px;
 	font-family: "bold";
 	margin: 0px;

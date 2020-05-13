@@ -3,14 +3,18 @@
 
     <div class="top">
 
-      <img src="../assets/ic_back.png" class="goBack" @click="goBack">
+      <img src="../assets/ic_left_black.png" class="goBack" @click="goBack">
 
       <label class="pageDesc" style="font-family : 'Bold' ; font-size : 24px">Order Detail</label>
 
 
+      <div class="btnsContainer" >
 
-      <div class="btn" v-if="order && order.status === 'pending_dispatch' " @click="displayUpdateStatusModal(order)">
-        MARK AS DISPATCH
+        <div class="btAction btActionCentered green" v-if="order && order.status === 'pending_dispatch' " @click="displayChecklistModal(order)">
+          MARK AS DISPATCH
+        </div>
+
+
       </div>
 
     </div>
@@ -33,8 +37,8 @@
 
     <div class="half-half">
       <div class="keyValCont">
-        <label class="key">Total Amount</label>
-        <label class="val">¥ {{totalAmount}}</label>
+        <label class="key">Products Total Amount + Shipping Fee</label>
+        <label class="val">¥ {{totalAmount}} + ¥ {{order.shipping_fee || '0.0'}}</label>
       </div>
       <div class="keyValCont">
         <label class="key">Status label</label>
@@ -64,8 +68,7 @@
 
         <div class="keyValCont">
           <label class="key">Remarks</label>
-          <!-- <label class="val">{{order.remarks || 'N/A'}}</label> -->
-          <label class="val">soidjisdojsapoijpof jdofjdaposijf opisfjd oipsdj fgopsdi jgfiaojgdiogjfasignfsdigj dfskjgfiugfdsipu ipdfijpifi ndkjg ndfgkj dfnglkjdfsngipdf gksdfng ip </label>
+          <label class="val">{{order.remarks || 'N/A'}}</label>
         </div>
 
       </div>
@@ -75,7 +78,7 @@
 
     <expandBtn title="Reciepient Information" @onToggle="expandUserInfo = !$event" style="margin-top : 20px" default="false"/>
 
-    <div v-if="expandUserInfo" class="cont">
+    <div v-if="expandUserInfo && order" class="cont">
 
 
         <div class="half-half">
@@ -99,6 +102,12 @@
             <label class="val">{{order.city}}</label>
           </div>
         </div>
+
+        <div class="keyValCont" style="width : 100% !important">
+          <label class="key">Address In Chinese</label>
+          <label class="val">{{order.address_cn}}</label>
+        </div>
+
       </div>
 
 
@@ -106,14 +115,14 @@
 
       <div v-if="expandProductsInfo" class="cont">
 
-        <div class="empty" v-if="order.items.length <= 0">
+        <div class="empty" v-if="!order || order.items.length <= 0">
           No Products Were Found...
         </div>
 
         <div class="grid">
-    			<div class="productCard" v-for="item in order.items">
+    			<div class="productCard" v-if="order" v-for="item in order.items">
             <img :src="item.product.thumbnail_url">
-            <div class="infoView" style="border-top : 2px solid #4E08F0">
+            <div class="infoView" style="border-top : 2px solid #e91e63">
               <label class="key">Name</label>
               <label class="value">{{item.product.name}}</label>
             </div>
@@ -124,6 +133,14 @@
             <div class="infoView">
               <label class="key">Qty</label>
               <label class="value">{{item.count}}</label>
+            </div>
+            <div class="infoView">
+              <label class="key">Color</label>
+              <label class="value">{{item.color.name_en}}</label>
+            </div>
+            <div class="infoView">
+              <label class="key">Size</label>
+              <label class="value">{{item.size.name_en}}</label>
             </div>
     			</div>
     		</div>
@@ -158,6 +175,47 @@
   					</div>
   			</modal>
 
+
+
+
+        <modal v-if="showChecklistModal"  @close="showChecklistModal = false ; updateableOrderObject = null" size="big">
+  					<h3 slot="header" style="text-align : left;">Products Checklist</h3>
+  					<div slot="body" class="modalBody">
+  						<label style="color : #37474f">Please refer to this products checklist and mark all the item to continue</label>
+
+              <table  style="margin-top : 20px">
+    		      <thead style="text-align : center">
+    		        <tr >
+                  <th  style="width : 10%">Check</th>
+    							<th  style="width : 30">Item Name</th>
+    		          <th  style="width : 20">Quantity</th>
+    		          <th  style="width : 20%">Color</th>
+    		          <th  style="width : 20%">Size</th>
+    		        </tr>
+    		      </thead>
+    		      <tbody>
+    		        <tr  v-bind:key="item.id" v-for="item in updateableOrderObject.items" style="text-align : center">
+                  <td >
+                    <input type="checkbox" :value="item.selected"  v-model="item.selected" @click="item.selected = !item.selected;"></input>
+                  </td>
+    							<td >{{item.product.name || 'N/A'}}</td>
+    							<td >{{item.count || 'N/A'}}</td>
+    		          <td >{{item.color.name_en || 'N/A'}}</td>
+    							<td >{{item.size.name_en || 'N/A'}}</td>
+    		        </tr>
+    		      </tbody>
+    		    </table>
+
+
+  					</div>
+  					<div class="buttonsWrapper" slot="footer">
+  						<div class="bottonsContainer" >
+  							<button type="button" class="bt neg" @click="showChecklistModal = false ; updateableOrderObject = null">Abort</button>
+  							<button type="button" class="bt pos" @click="itemsChecked">Update</button>
+  						</div>
+  					</div>
+  			</modal>
+
   </div>
 </template>
 
@@ -186,10 +244,31 @@ var NotificationsController = require("../components/NotificationsController.js"
        showStatusModal : false,
        expandBasicInfo: true,
        expandUserInfo:false,
-       expandProductsInfo: false
+       expandProductsInfo: false,
+       showChecklistModal: false
 		 };
 	 },
 		methods:{
+      itemsChecked(){
+         var total = this.updateableOrderObject.items.length;
+         var count = 0;
+        this.updateableOrderObject.items.forEach((item, i) => {
+          if (item.selected) {
+            count++;
+          }
+        });
+        if (total === count) {
+          this.showChecklistModal = false;
+          this.displayUpdateStatusModal(this.updateableOrderObject);
+        }else{
+          NotificationsController.showNotification('warning' , 'Please check mark all the products in the list')
+        }
+      },
+      displayChecklistModal(order){
+        console.log(order)
+        this.updateableOrderObject = order;
+        this.showChecklistModal = true;
+      },
       displayUpdateStatusModal(bundle){
 				console.log("displayUpdateStatusModal");
 				this.updateableOrderObject = bundle;
@@ -325,7 +404,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   font-family: 'Bold';
   border: 0.5px solid gray;
   border-radius: 4px;
-  color: white;
+  color: black;
   padding: 10px;
   outline: none;
 }
@@ -340,18 +419,18 @@ var NotificationsController = require("../components/NotificationsController.js"
   line-height: 20px;
   font-family: 'Thin';
   font-size: 14px;
-  color: white;
+  color: black;
   text-align: left;
 }
 
 .val{
   width: 100%;
-  
+
   height: auto !important;
   line-height: 40px;
   font-family: 'Medium';
   font-size: 16px;
-  color: white;
+  color: black;
   text-align: left;
   border-bottom: 0.1px solid gray;
 }
@@ -374,7 +453,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 .order .top .pageDesc{
   width: calc(100% - 120px);
-	color: white;
+	color: black;
 	font-size: 18px;
 	font-family: 'Thin';
   text-align: left;
@@ -405,10 +484,10 @@ var NotificationsController = require("../components/NotificationsController.js"
 	line-height: 50px;
 	font-size: 20px;
 	font-weight: bold;
-	color: white;
+	color: black;
 	font-family: 'Bold';
 	text-align: left;
-	border-bottom: 2px solid #4E08F0;
+	border-bottom: 2px solid black;
 	margin-top: 20px;
 }
 
@@ -416,7 +495,10 @@ var NotificationsController = require("../components/NotificationsController.js"
 	display: inline-block;
 	text-align: center;
   float: left;
+  padding-bottom: 20px;
 	/* flex-direction: row; */
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .order .grid .productCard{
@@ -430,6 +512,7 @@ var NotificationsController = require("../components/NotificationsController.js"
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  box-shadow: 0px 0px 8px 0px #BDBDBD;
 }
 
 .order .grid .productCard > img{
