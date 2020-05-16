@@ -3,9 +3,7 @@
 
     <img class="bgImg">
   </img>
-  <div class="overlay">
 
-  </div>
 
 
     <router-view class="mainAppCont"/>
@@ -179,15 +177,7 @@
  overflow: hidden;
 }
 
-.overlay{
-  width: 100vw;
-  height: 100vh;
-  background: rgba(255, 255, 255, 0.93);
-  position: absolute;
-  top: 0;
-  left: 0;
-  z-index: 1;
-}
+
 .mainAppCont{
   width: 100vw;
   height: 100vh;

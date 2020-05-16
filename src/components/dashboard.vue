@@ -2,75 +2,111 @@ CE Store<template lang="html">
   <div >
     <div class="dash">
 
-  		<div class="cont"  v-if="total">
-        <div class="square" >
-          <div class="titleContOuter">
-            <div class="titleCont" style="border-left: 4px solid #26A69A;">
-              <label class="name" style="color : #26A69A">TOTAL</label>
-        			<label class="value" >TOTAL ENTRIES CREATED FOR</label>
-            </div>
-          </div>
-          <div class="kvv" style="margin-top : 30px ">
-            <label class="k">USERS</label>
-            <label class="v">{{total.users}}</label>
-          </div>
-          <div class="kvv">
-            <label class="k">ADMINS</label>
-            <label class="v">{{total.admins}}</label>
-          </div>
-          <div class="kvv">
-            <label class="k">TRAINGINGS</label>
-            <label class="v">{{total.memberships}}</label>
-          </div>
-          <div class="kvv">
-            <label class="k">BUNDLES</label>
-            <label class="v">{{total.bundles}}</label>
-          </div>
-          <div class="kvv">
-            <label class="k">COURSES</label>
-            <label class="v">{{total.courses}}</label>
-          </div>
-          <div class="kvv">
-            <label class="k">PRODUCTS</label>
-            <label class="v">{{total.products}}</label>
-          </div>
-          <div class="kvv">
-            <label class="k">ORDERS</label>
-            <label class="v">{{total.orders}}</label>
-          </div>
-          <div class="kvv">
-            <label class="k">FILES</label>
-            <label class="v">{{total.files}}</label>
-          </div>
-    		</div>
-      </div>
+      <div class="tripleContainer">
 
-      <div class="cont"  v-if="revenue" style="float : right">
-        <div class="square" >
-          <div class="titleContOuter">
-            <div class="titleCont" style="border-left: 4px solid #D81B60;">
-              <label class="name" style="color : #D81B60">TOTAL REVENUE</label>
-              <label class="value" >ACCUMLATED REVENUE FROM TRAINGINGS , STORE and BUNDLES</label>
-
-              <label class="totalRevenue">
-                ¥{{getTotalRevenue(revenue)}}</label>
-            </div>
+        <div class="item" style="margin-right : 2%">
+          <div class="cont"  v-if="total">
+            <div class="square" >
+              <div class="titleContOuter">
+                <div class="titleCont" style="border-left: 4px solid #26A69A;">
+                  <label class="name" style="color : #26A69A">TOTAL</label>
+            			<label class="value" >TOTAL ENTRIES CREATED FOR</label>
+                </div>
+              </div>
+              <div class="kvv" style="margin-top : 30px ">
+                <label class="k">USERS</label>
+                <label class="v">{{total.users}}</label>
+              </div>
+              <div class="kvv">
+                <label class="k">ADMINS</label>
+                <label class="v">{{total.admins}}</label>
+              </div>
+              <div class="kvv">
+                <label class="k">TRAINGINGS</label>
+                <label class="v">{{total.memberships}}</label>
+              </div>
+              <div class="kvv">
+                <label class="k">BUNDLES</label>
+                <label class="v">{{total.bundles}}</label>
+              </div>
+              <div class="kvv">
+                <label class="k">COURSES</label>
+                <label class="v">{{total.courses}}</label>
+              </div>
+              <div class="kvv">
+                <label class="k">PRODUCTS</label>
+                <label class="v">{{total.products}}</label>
+              </div>
+              <div class="kvv">
+                <label class="k">ORDERS</label>
+                <label class="v">{{total.orders}}</label>
+              </div>
+              <div class="kvv">
+                <label class="k">FILES</label>
+                <label class="v">{{total.files}}</label>
+              </div>
+        		</div>
           </div>
-
-
-          <pie-chart
-          height="360px"
-          width="100%"
-          :donut="true"
-          :data="[
-          ['Store' , revenue.store],
-          ['Store Shipping' , revenue.shippingRevenue],
-          ['Trainings', revenue.membership] ,
-          ['License' , revenue.license],
-          ['CE Store', revenue.bundles] ]"></pie-chart>
-
         </div>
+
+        <div class="item" style="margin-right : 2% ; width: 25%;">
+          <div class="cont"  v-if="revenue" style="float : right">
+            <div class="square" >
+              <div class="titleContOuter">
+                <div class="titleCont" style="border-left: 4px solid #D81B60;">
+                  <label class="name" style="color : #D81B60">GENDER RATIO</label>
+                  <label class="value" >GENDER RATIO FOR ALL THE USRES</label>
+
+                </div>
+              </div>
+
+
+              <pie-chart
+              height="360px"
+              width="100%"
+              :data="[
+              ['Male' , maleCount],
+              ['Female' , femaleCount] ]"></pie-chart>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="item" style="width: 39% ">
+          <div class="cont"  v-if="revenue" style="float : right">
+            <div class="square" >
+              <div class="titleContOuter">
+                <div class="titleCont" style="border-left: 4px solid #3366CC;">
+                  <label class="name" style="color : #3366CC">TOTAL REVENUE : <span class="totalRevenue">
+                    ¥{{getTotalRevenue(revenue)}}</span></label>
+                  <label class="value" >ACCUMLATED REVENUE FROM TRAINGINGS , STORE and BUNDLES</label>
+
+
+                </div>
+              </div>
+
+
+              <pie-chart
+              height="360px"
+              width="100%"
+              :data="[
+              ['Store' , revenue.store],
+              ['Store Shipping' , revenue.shippingRevenue],
+              ['Trainings', revenue.membership] ,
+              ['License' , revenue.license],
+              ['CE Store', revenue.bundles] ]"></pie-chart>
+
+            </div>
+          </div>
+        </div>
+
+
       </div>
+
+
+
+
+
 
 
       <div class="cont" v-if="users" style="width : 99.5% !important; margin-top : 20px; height : 500px">
@@ -124,7 +160,9 @@ import ApexCharts from 'apexcharts'
         users : {},
         graphs : {},
         revenue: {store : 0 , membership : 0 , bundles : 0},
-        total : {}
+        total : {},
+        femaleCount: 0,
+        maleCount: 0
 	    };
 	  },
     methods:{
@@ -171,7 +209,6 @@ import ApexCharts from 'apexcharts'
                 bundleOrders[obj.date] = obj.count
               })
               ctx.graphs.bundleOrders = bundleOrders;
-              console.log(ctx.graphs);
 
 							NotificationsController.hideActivityIndicator();
 						})
@@ -213,12 +250,37 @@ import ApexCharts from 'apexcharts'
 							NotificationsController.hideActivityIndicator();
 							NotificationsController.showErrorNotification(error);
 						});
-			}
+			},
+      getGenderRatio(){
+        NotificationsController.showActivityIndicator();
+        const ctx = this;
+        HTTP.get(URLS.DASHBOARD.GENDER_RATIO , {
+            headers: {
+              Authorization: localStorage.getItem("token")
+            }
+          })
+            .then(function(res) {
+              res.data.data.forEach((item, i) => {
+                if (item.gender === "male") {
+                  ctx.maleCount = item.count
+                }else if(item.gender === "female"){
+                  ctx.femaleCount = item.count
+                }
+              });
+
+              NotificationsController.hideActivityIndicator();
+            })
+            .catch(function(error) {
+              NotificationsController.hideActivityIndicator();
+              NotificationsController.showErrorNotification(error);
+            });
+      }
     },
     mounted() {
       this.getRevenue();
       this.getTotal();
       this.getUsers();
+      this.getGenderRatio()
     }
   }
 </script>
@@ -226,32 +288,24 @@ import ApexCharts from 'apexcharts'
 <style lang="css" scoped>
 
 .dash{
-
+  width: calc(100% - 80px);
+  margin: 40px 50px 40px 30px;
 	display: inline-block;
-	padding-top: 20px;
-  padding-bottom: 20px;
-
-
   background: rgba(255,255,255,0.5);
   box-shadow: 0px 0px 10px 0px #BDBDBD;
-
-
-
-  margin-top: 20px;
   border-radius: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
+
+  padding: 20px 10px 20px 10px;
+
 }
 
 .cont{
+  width: 100%;
   float: left;
   height: auto;
   display: flex;
-  width: auto;
   margin-right: 10px;
   margin-bottom: 40px;
-  min-width: 48%;
-
 }
 
 .square{
@@ -322,19 +376,28 @@ import ApexCharts from 'apexcharts'
 }
 
 .totalRevenue{
-  display: flex;
-  flex-direction: column;
   font-size: 22px;
   font-weight: bold;
   font-family: 'Medium';
   text-align: left;
-  margin-top: 10px;
+  color: black;
 }
 
 .totalRevenue span{
   font-size: 14px;
   font-weight: bold;
   font-family: 'Regular';
+}
 
+.tripleContainer{
+  width: 100%;
+  height: auto;
+  display: flex;
+  flex-direction: row;
+}
+
+.tripleContainer .item{
+  width: 32%;
+  height: auto;
 }
 </style>

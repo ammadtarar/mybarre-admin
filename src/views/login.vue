@@ -99,7 +99,7 @@
 
 }
 .loginContainer{
-
+  background: white;
   width: 400px;
   height: 100%;
   display: flex;

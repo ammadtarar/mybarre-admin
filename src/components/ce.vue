@@ -375,7 +375,7 @@ var NotificationsController = require("../components/NotificationsController.js"
       renameFile(){
         NotificationsController.showActivityIndicator();
         const ctx = this;
-        HTTP.patch(URLS.FILE.RENAME.replace(':id' , this.renameObject.id) , {name : this.rename} , {
+        HTTP.patch(URLS.FILE.BY_ID.replace(':id' , this.renameObject.id) , {name : this.rename} , {
             headers: {
               Authorization: localStorage.getItem("token")
             },

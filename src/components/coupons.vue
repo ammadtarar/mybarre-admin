@@ -172,13 +172,14 @@
 					<thead>
 						<tr style="text-align : center">
 							<th  style="width : 5">ID</th>
-							<th  style="width : 15">FIRST NAME</th>
-							<th  style="width : 15">FAMILY NAME</th>
-							<th  style="width : 15">NICKNAME</th>
+							<th  style="width : 10">FIRST NAME</th>
+							<th  style="width : 10">FAMILY NAME</th>
+							<th  style="width : 10">NICKNAME</th>
 							<th  style="width : 15%">EMAIL</th>
 							<th  style="width : 15%">PHONE</th>
 							<th  style="width : 10%">GENDER</th>
 							<th  style="width : 10%">WECHAT ID</th>
+              <th  style="width : 15%">Course Name</th>
 						</tr>
 					</thead>
 					<tbody>
@@ -191,6 +192,7 @@
 							<td >{{user.phone || 'N/A'}}</td>
 							<td >{{user.gender ? user.gender.toUpperCase() : 'N/A' || 'N/A'}}</td>
 							<td >{{user.wechat_id || 'N/A'}}</td>
+              <td >{{getCourse(user)}}</td>
 						</tr>
 					</tbody>
 				</table>
@@ -250,6 +252,29 @@ export default {
       Pager
 		},
 		methods : {
+      getCourse(user){
+        if (user === undefined || user === null) {
+          return "N/A";
+        }
+
+        const memberships = user.memberships || null;
+        if (memberships === null) {
+          return 'N/A';
+        }
+        if (memberships.length <= 0) {
+          return 'N/A';
+        }
+        const active = memberships[memberships.length -1] || null;
+        if (active === null) {
+          return 'N/A';
+        }
+
+        const course = active.course || null;
+        if (course === null) {
+          return 'N/A';
+        }
+        return course.name;
+      },
 			downloadUserList(coupon){
 				if (coupon.users.length <= 0) {
 					NotificationsController.showNotification('warning' , 'Nobody has redeemed this coupon yet');

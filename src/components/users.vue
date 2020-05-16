@@ -30,12 +30,13 @@
 		          <th  style="width : 10">FIRST NAME</th>
 							<th  style="width : 10">FAMILY NAME</th>
 							<th  style="width : 10">NICKNAME</th>
-		          <th  style="width : 10%">EMAIL</th>
-		          <th  style="width : 10%">PHONE</th>
+		          <th  style="width : 8%">EMAIL</th>
+		          <th  style="width : 8%">PHONE</th>
 							<th  style="width : 8%">GENDER</th>
-							<th  style="width : 10%">WECHAT ID</th>
+							<th  style="width : 8%">WECHAT ID</th>
 							<th  style="width : 8%">COURSE</th>
-							<th  style="width : 12%">STATUS</th>
+							<th  style="width : 10%">STATUS</th>
+							<th  style="width : 8%">EXPIRY</th>
 							<th  style="width : 8%">ACTIONS</th>
 		        </tr>
 		      </thead>
@@ -51,6 +52,7 @@
 							<td >{{user.wechat_id || 'N/A'}}</td>
 							<td ><span style="white-space: pre-wrap;">{{getCourse(user)}}</span></td>
 							<td >{{getMembershipStatus(user)}}</td>
+							<td>{{getExpiry(user)}}</td>
 							<td>
 								<a >
 									<button
@@ -158,6 +160,25 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 				var membershipStatus = status.replaceAll("-" , " ").toUpperCase();
 				return membershipStatus;
+			},
+			getExpiry(user){
+				const memberships = user.memberships || null;
+				if (memberships === null) {
+					return 'N/A';
+				}
+				if (memberships.length <= 0) {
+					return 'N/A';
+				}
+				const active = memberships[memberships.length -1] || null;
+				if (active === null) {
+					return 'N/A';
+				}
+
+				const expiry = active.end || null;
+				if (status === null) {
+					return 'N/A';
+				}
+				return expiry;
 			},
 			getCourse(user){
 				const memberships = user.memberships || null;

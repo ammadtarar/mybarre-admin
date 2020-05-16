@@ -1,10 +1,17 @@
 <style>
 
+.homeMainContainer{
+  width: 100vw;
+  height: 100vh;
+}
+
 .home {
     width: 100vw;
     height: 100vh;
     display: flex;
     flex-direction: column;
+    z-index: 2;
+    position: relative;
 }
 .company_icon{
   width: 150px;
@@ -170,65 +177,87 @@
     text-align: center;
 }
 
+.overlay{
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255, 255, 255, 0.93);
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 1;
+}
+
 </style>
 
 <template>
 
-<div class="home">
 
-    <div class="navBar">
-        <img src="../assets/mybarree_transparent_logo.png" class="company_icon">
-        <div class="btnsContainer">
+<div class="homeMainContainer">
 
+  <div class="overlay">
 
-            <div v-bind:key="index" v-for="(page , index) in pages">
-                <a class="navBtn" v-bind:class="{ btnSelected: page.selected}" @click="onNavItemClicked(page)">
-                    <img :src="page.icon" class="navIcon" /> {{page.name}}
-                </a>
-            </div>
-
-        </div>
-
-        <div class="admin">
-          <label class="name">{{name}}
-            <img src="../assets/ic_admins.png" class="icon"/>
-          </label>
-          <label class="email">{{email}}
-            <img src="../assets/ic_email.png" class="icon"/>
-          </label>
-        </div>
-        <a class="btLogout" @click="logout">
-            <img src="../assets/ic_logout.png" class="navIcon" />
-            <span class="logout">Logout</span>
-        </a>
-
-    </div>
-
-    <transition>
-        <div class="home_content">
-            <dashboard v-if="lvOneIndex === 0" />
-            <admins v-if="lvOneIndex === 1" />
-
-            <users v-if="lvOneIndex === 2 && lvTwoIndex <= 0" @showUserDetail="showUserDetail" />
-            <user v-if="lvOneIndex === 2 && lvTwoIndex === 1" :id="userId" @hideUserDetail="onHideUserDeail" />
-
-            <training v-if="lvOneIndex === 3" @showVideoPreview="showVideoPreview" />
-
-            <celist v-if="lvOneIndex === 4 && lvTwoIndex <= 0" @showBundleDetail="showBundleDetail" />
-            <ce v-if="lvOneIndex === 4 && lvTwoIndex === 1" :id="bundleId" @hideBundleDetail="hideBundleDetail" />
-
-            <store v-if="lvOneIndex === 5" />
-            <coupons v-if="lvOneIndex === 6" />
+  </div>
 
 
-            <settings v-if="lvOneIndex === 7"/>
+  <div class="home">
+
+      <div class="navBar">
+          <img src="../assets/mybarree_transparent_logo.png" class="company_icon">
+          <div class="btnsContainer">
 
 
-        </div>
-    </transition>
+              <div v-bind:key="index" v-for="(page , index) in pages">
+                  <a class="navBtn" v-bind:class="{ btnSelected: page.selected}" @click="onNavItemClicked(page)">
+                      <img :src="page.icon" class="navIcon" /> {{page.name}}
+                  </a>
+              </div>
 
+          </div>
+
+          <div class="admin">
+            <label class="name">{{name}}
+              <img src="../assets/ic_admins.png" class="icon"/>
+            </label>
+            <label class="email">{{email}}
+              <img src="../assets/ic_email.png" class="icon"/>
+            </label>
+          </div>
+          <a class="btLogout" @click="logout">
+              <img src="../assets/ic_logout.png" class="navIcon" />
+              <span class="logout">Logout</span>
+          </a>
+
+      </div>
+
+      <transition>
+          <div class="home_content">
+              <dashboard v-if="lvOneIndex === 0" />
+              <admins v-if="lvOneIndex === 1" />
+
+              <users v-if="lvOneIndex === 2 && lvTwoIndex <= 0" @showUserDetail="showUserDetail" />
+              <user v-if="lvOneIndex === 2 && lvTwoIndex === 1" :id="userId" @hideUserDetail="onHideUserDeail" />
+
+              <training v-if="lvOneIndex === 3" @showVideoPreview="showVideoPreview" />
+
+              <celist v-if="lvOneIndex === 4 && lvTwoIndex <= 0" @showBundleDetail="showBundleDetail" />
+              <ce v-if="lvOneIndex === 4 && lvTwoIndex === 1" :id="bundleId" @hideBundleDetail="hideBundleDetail" />
+
+              <store v-if="lvOneIndex === 5" />
+              <coupons v-if="lvOneIndex === 6" />
+
+
+              <settings v-if="lvOneIndex === 7"/>
+
+
+          </div>
+      </transition>
+
+
+  </div>
 
 </div>
+
+
 
 </template>
 
@@ -377,7 +406,6 @@ export default {
     },
     mounted() {
         const token = localStorage.getItem('token');
-        console.log("TOkEN = "  , token);
         if (token === undefined || token === null || token === "") {
           this.$router.push('/');
           return
@@ -391,14 +419,11 @@ export default {
     },
     created() {
       const token = localStorage.getItem('token');
-      console.log("TOkEN = "  , token);
       if (token === undefined || token === null || token === "") {
         this.$router.push('/');
         return
       }
         const params = new URLSearchParams(window.location.search);
-        console.log("window.location.search");
-        console.log(window.location.search);
         const lv1Tab = params.get('lv1Tab');
         if (lv1Tab === undefined || lv1Tab === null || lv1Tab === "") {
             this.onNavItemClicked({
@@ -416,10 +441,7 @@ export default {
                 ctx.lvTwoIndex = 0;
                 ctx.lvOneIndex = page.index;
                 ctx.current = page;
-                console.log("ctx.lvOneIndex = " , ctx.lvOneIndex);
-                console.log("ctx.current = " , ctx.current);
                 const lv2Tab = params.get('lv2Tab') || null;
-                console.log("HOME , lv2Tab = " + lv2Tab);
                 if (lv2Tab === null) {
                   return;
                 }

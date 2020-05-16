@@ -23,11 +23,12 @@
     <thead>
       <tr >
         <th  style="width : 2">ID</th>
-        <th  style="width : 15">NAME</th>
+        <th  style="width : 10">NAME</th>
         <th  style="width : 15%">TIME</th>
-        <th  style="width : 20%">VENUE</th>
-        <th  style="width : 10%">PRICE</th>
-        <th  style="width : 10%">LICENSE FEE</th>
+        <th  style="width : 14%">LAST SIGN UP DATE</th>
+        <th  style="width : 15%">VENUE</th>
+        <th  style="width : 8%">PRICE</th>
+        <th  style="width : 8%">LICENSE FEE</th>
         <th  style="width : 18%">ACTIONS</th>
       </tr>
     </thead>
@@ -36,6 +37,7 @@
         <td >{{course.id || 'N/A'}}</td>
         <td >{{course.name || 'N/A'}}</td>
         <td >{{course.start || 'N/A'}} - {{course.end || 'N/A'}}</td>
+        <td >{{course.last_signup_date || 'N/A'}}</td>
         <td >{{course.venue || 'N/A'}}</td>
         <td >{{course.price || 'N/A'}}</td>
         <td >{{course.license_fee || 'N/A'}}</td>
@@ -109,10 +111,13 @@
           <input v-model="course.venue" placeholder="Enter the venue for this course" class="textInput" />
 
 	        <label class="inputTitle spacing30">Start Time</label>
-	        <input type="date" v-model="course.start" placeholder="Enter a name for this course" class="textInput" />
+	        <input type="date" v-model="course.start" placeholder="Select a start time for the course" class="textInput" />
 
 	        <label class="inputTitle spacing30">End Time</label>
-	        <input type="date" v-model="course.end" placeholder="Enter a name for this course" class="textInput" />
+	        <input type="date" v-model="course.end" placeholder="Select an end time for the course" class="textInput" />
+
+          <label class="inputTitle spacing30">Last SingUp Date</label>
+	        <input type="date" v-model="course.last_signup_date" placeholder="Select a time for last sign up" class="textInput" />
 
 	      </div>
 	      <div class="buttonsWrapper" slot="footer">
@@ -208,6 +213,9 @@
          <label class="inputTitle spacing30">End Time</label>
          <input type="date" v-model="editEnd" placeholder="Enter a name for this course" class="textInput" />
 
+         <label class="inputTitle spacing30">Last SignUp Date</label>
+         <input type="date" v-model="editSignUpDate" placeholder="Enter a name for this course" class="textInput" />
+
 
         </div>
         <div class="buttonsWrapper" slot="footer">
@@ -227,7 +235,7 @@
           <label class="inputTitle spacing30">Course Name</label>
           <label style="color : #37474f;" >{{checkinModel.name}}</label>
 
-          <label class="inputTitle spacing30">QR Codee</label>
+          <label class="inputTitle spacing30">QR Cpde</label>
           <div class="qrCont" ref="qrCont">
             <vue-qr :text="qrStr" :callback="onQrGenerated" qid="testid"  :size="qrSize"></vue-qr>
           </div>
@@ -277,6 +285,7 @@ import VueQr from 'vue-qr'
         editableCourse: null,
         editStart : '',
         editEnd : '',
+        editSignUpDate: '',
         checkinModel : null,
         displayCheckInQrModal: false,
         qrStr : '',
@@ -349,6 +358,7 @@ import VueQr from 'vue-qr'
         this.editableCourse = course;
         this.editStart = course.start.replace('/' , '-').replace('/' , '-')
         this.editEnd = course.end.replace('/' , '-').replace('/' , '-')
+        this.editSignUpDate = course.last_signup_date.replace('/' , '-').replace('/' , '-')
         this.showEditModal = true;
       },
       editCourse(){
@@ -356,6 +366,7 @@ import VueQr from 'vue-qr'
         const ctx = this;
         this.editableCourse.start = this.editStart;
         this.editableCourse.end = this.editEnd;
+        this.editableCourse.last_signup_date = this.editSignUpDate;
         HTTP.patch(URLS.COURSE.BY_ID.replace(':id' , this.editableCourse.id) , this.editableCourse, {
             headers: {
               Authorization: localStorage.getItem("token")

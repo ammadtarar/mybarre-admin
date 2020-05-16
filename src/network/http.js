@@ -9,8 +9,8 @@ if (token !== undefined && token !== null && token !== "") {
 
 
 
-//const baseURL = 'http://localhost:3001/';
-const baseURL = 'https://api-staging.mybarrefitness.com/';
+const baseURL = 'http://localhost:3001/';
+// const baseURL = 'https://api-staging.mybarrefitness.com/';
 axios.defaults.baseURL = baseURL;
 
 export const HTTP = axios.create({
@@ -84,7 +84,8 @@ export const URLS = {
     BUNDLES_REVENUE: 'dashboard/bundles/revenue',
     BUNDLES: 'dashboard/bundles',
     REVENUE: 'dashboard/revnue',
-    TOTAL: 'dashboard/total'
+    TOTAL: 'dashboard/total',
+    GENDER_RATIO: 'dashboard/users/gender/ratio'
   },
   CONFIGS: {
     CONFIG: 'configs'

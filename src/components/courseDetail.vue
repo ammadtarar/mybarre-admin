@@ -57,7 +57,7 @@
         <div class="keyValCont">
           <label class="key">Price</label>
           <label class="val" v-if="!isEditing">¥{{course.price || 'N/A'}}</label>
-          <input type="number" v-model="course.price"  placeholder="Enter title here" v-if="isEditing"/>
+          <input type="number" v-model="course.price"  placeholder="Enter price here" v-if="isEditing"/>
         </div>
       </div>
 
@@ -65,26 +65,39 @@
         <div class="keyValCont">
           <label class="key">START</label>
           <label class="val" v-if="!isEditing">{{course.start || 'N/A'}}</label>
-          <input type="date" v-model="course.start"  placeholder="Enter title here" v-if="isEditing"/>
+          <input type="date" v-model="course.start"  placeholder="Select start time here" v-if="isEditing"/>
         </div>
         <div class="keyValCont">
           <label class="key">END</label>
           <label class="val" v-if="!isEditing">{{course.end || 'N/A'}}</label>
-          <input type="date" v-model="course.end"  placeholder="Enter title here" v-if="isEditing"/>
+          <input type="date" v-model="course.end"  placeholder="Select end time here" v-if="isEditing"/>
         </div>
       </div>
 
 
       <div class="half-half">
         <div class="keyValCont">
-          <label class="key">License Fee</label>
-          <label class="val" v-if="!isEditing">¥{{course.license_fee || 'N/A'}}</label>
-          <input type="number" v-model="course.license_fee"  placeholder="Enter title here" v-if="isEditing"/>
+          <label class="key">Last SignUp Date</label>
+          <label class="val" v-if="!isEditing">{{course.last_signup_date || 'N/A'}}</label>
+          <input type="date" v-model="course.last_signup_date"  placeholder="Select last sign up date" v-if="isEditing"/>
         </div>
         <div class="keyValCont">
+          <label class="key">License Fee</label>
+          <label class="val" v-if="!isEditing">¥{{course.license_fee || 'N/A'}}</label>
+          <input type="number" v-model="course.license_fee"  placeholder="Enter license fee" v-if="isEditing"/>
+        </div>
+      </div>
+
+      <div class="half-half">
+        <div class="keyValCont">
           <label class="key">Available Seats</label>
-          <label class="val" v-if="!isEditing">{{course.available_seats || 'N/A'}} / {{course.seats || 'N/A'}}</label>
-          <input type="number" v-model="course.available_seats"  placeholder="Enter title here" v-if="isEditing"/>
+          <label class="val" v-if="!isEditing">{{course.available_seats || 'N/A'}}</label>
+          <input type="number" v-model="course.available_seats"  placeholder="Enter available seat" v-if="isEditing"/>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Remaining Seats</label>
+          <label class="val" >{{course.seats || 'N/A'}}</label>
+          <!-- <input type="number" v-model="course.available_seats"  placeholder="Enter title here" v-if="isEditing"/> -->
         </div>
       </div>
 
@@ -93,7 +106,7 @@
         <div class="keyValCont">
           <label class="key">VENUE</label>
           <label class="val" v-if="!isEditing">{{course.venue || 'N/A'}}</label>
-          <input type="text" v-model="course.venue"  placeholder="Enter title here" v-if="isEditing"/>
+          <input type="text" v-model="course.venue"  placeholder="Enter course venue" v-if="isEditing"/>
         </div>
         <div class="keyValCont">
           <label class="key">Welcome Document URL</label>
@@ -228,7 +241,7 @@
           <label class="inputTitle spacing30">Course Name</label>
           <label style="color : #37474f;" >{{course.name}}</label>
 
-          <label class="inputTitle spacing30">QR Codee</label>
+          <label class="inputTitle spacing30">QR Cpde</label>
           <div class="qrCont" ref="qrCont">
             <vue-qr :text="qrStr" :callback="onQrGenerated" qid="testid"  :size="qrSize"></vue-qr>
           </div>
