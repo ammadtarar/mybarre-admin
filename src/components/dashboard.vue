@@ -4,7 +4,7 @@ CE Store<template lang="html">
 
       <div class="tripleContainer">
 
-        <div class="item" style="margin-right : 2%">
+        <div class="item" style="margin-right : 2%; width: 20%;">
           <div class="cont"  v-if="total">
             <div class="square" >
               <div class="titleContOuter">
@@ -13,7 +13,7 @@ CE Store<template lang="html">
             			<label class="value" >TOTAL ENTRIES CREATED FOR</label>
                 </div>
               </div>
-              <div class="kvv" style="margin-top : 30px ">
+              <div class="kvv" >
                 <label class="k">USERS</label>
                 <label class="v">{{total.users}}</label>
               </div>
@@ -41,15 +41,45 @@ CE Store<template lang="html">
                 <label class="k">ORDERS</label>
                 <label class="v">{{total.orders}}</label>
               </div>
+            <div class="kvv">
+              <label class="k">FILES</label>
+              <label class="v">{{total.files}}</label>
+            </div>
               <div class="kvv">
-                <label class="k">FILES</label>
-                <label class="v">{{total.files}}</label>
+                <label class="k">TOTAL DISK SIZE</label>
+                <label class="v">{{disk.total_str}}</label>
+              </div>
+              <div class="kvv">
+                <label class="k">AVAILABLE DISK SIZE</label>
+                <label class="v">{{disk.free_str}}</label>
               </div>
         		</div>
           </div>
         </div>
 
-        <div class="item" style="margin-right : 2% ; width: 25%;">
+
+        <div class="item" style="margin-right : 2% ; width: 20%;">
+          <div class="cont"  v-if="revenue" style="float : right">
+            <div class="square" >
+              <div class="titleContOuter">
+                <div class="titleCont" style="border-left: 4px solid #AFB42B;">
+                  <label class="name" style="color : #AFB42B">DISK</label>
+                  <label class="value" >SERVER DISK SIZE AND AVAILABLE </label>
+                </div>
+              </div>
+
+
+              <pie-chart
+               :colors= "['#00897B', '#FF1744']"
+              :data="[
+              ['Available (GB)' , disk.free],
+              ['Used (GB)' , disk.total - disk.free]]"></pie-chart>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="item" style="margin-right : 2% ; width: 20%;">
           <div class="cont"  v-if="revenue" style="float : right">
             <div class="square" >
               <div class="titleContOuter">
@@ -62,8 +92,7 @@ CE Store<template lang="html">
 
 
               <pie-chart
-              height="360px"
-              width="100%"
+              :colors= "['#42A5F5', '#E91E63']"
               :data="[
               ['Male' , maleCount],
               ['Female' , femaleCount] ]"></pie-chart>
@@ -87,8 +116,6 @@ CE Store<template lang="html">
 
 
               <pie-chart
-              height="360px"
-              width="100%"
               :data="[
               ['Store' , revenue.store],
               ['Store Shipping' , revenue.shippingRevenue],
@@ -162,7 +189,11 @@ import ApexCharts from 'apexcharts'
         revenue: {store : 0 , membership : 0 , bundles : 0},
         total : {},
         femaleCount: 0,
-        maleCount: 0
+        maleCount: 0,
+        disk: {
+          total_str : "0 GB",
+          free_str : "0 GB",
+        }
 	    };
 	  },
     methods:{
@@ -234,6 +265,23 @@ import ApexCharts from 'apexcharts'
 							NotificationsController.showErrorNotification(error);
 						});
 			},
+      getDisk(){
+				NotificationsController.showActivityIndicator();
+				const ctx = this;
+				HTTP.get(URLS.DASHBOARD.DISK , {
+						headers: {
+							Authorization: localStorage.getItem("token")
+						}
+					})
+						.then(function(res) {
+              ctx.disk = res.data;
+							NotificationsController.hideActivityIndicator();
+						})
+						.catch(function(error) {
+							NotificationsController.hideActivityIndicator();
+							NotificationsController.showErrorNotification(error);
+						});
+			},
       getTotal(){
 				NotificationsController.showActivityIndicator();
 				const ctx = this;
@@ -280,7 +328,8 @@ import ApexCharts from 'apexcharts'
       this.getRevenue();
       this.getTotal();
       this.getUsers();
-      this.getGenderRatio()
+      this.getGenderRatio();
+      this.getDisk();
     }
   }
 </script>
