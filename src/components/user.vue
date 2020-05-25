@@ -13,7 +13,63 @@
 
     <expandBtn title="Basic Information" @onToggle="expandBasicInfo = $event" default="true" style="margin-top : 20px"/>
 
-    <div v-if="expandBasicInfo && user" class="cont">
+    <div v-if="expandBasicInfo && user && user.user.type === 'ce-only'" class="cont">
+
+      <div >
+        <div class="tripleKeyValCont">
+          <label class="key">Headshot</label>
+          <img  :src="user.user.avatar_url"  class="dp" >
+        </div>
+      </div>
+
+
+
+      <div class="half-half" >
+        <div class="keyValCont">
+          <label class="key">Nickname</label>
+          <label class="val">{{user.user.nickname || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Gender</label>
+          <label class="val">{{user.user.gender ? user.user.gender.toUpperCase() : 'N/A' || 'N/A'}}</label>
+        </div>
+      </div>
+
+
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">City</label>
+          <label class="val">{{user.user.city || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Address</label>
+          <label class="val">{{user.user.address || 'N/A'}}</label>
+        </div>
+      </div>
+
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Nationality</label>
+          <label class="val">{{user.user.nationality || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">User ID</label>
+          <label class="val">{{user.user.id || 'N/A'}}</label>
+        </div>
+      </div>
+
+
+
+
+
+    </div>
+
+
+
+
+    <div v-if="expandBasicInfo && user && user.user.type !== 'ce-only'" class="cont">
 
       <div  >
         <div class="tripleKeyValCont">
@@ -117,7 +173,7 @@
     </div>
 
 
-    <expandBtn title="Studio Information" @onToggle="expandStudioInfo = $event" style="margin-top : 20px"/>
+    <expandBtn title="Studio Information" @onToggle="expandStudioInfo = $event" style="margin-top : 20px" v-if="user.user.type !== 'ce-only'"/>
 
     <div v-if="expandStudioInfo" class="cont">
       <div class="half-half">
@@ -153,7 +209,7 @@
     </div>
 
 
-    <expandBtn title="Background & Motivation" @onToggle="expandBgInfo = $event" style="margin-top : 20px"/>
+    <expandBtn title="Background & Motivation" @onToggle="expandBgInfo = $event" style="margin-top : 20px" v-if="user.user.type !== 'ce-only'"/>
 
     <div v-if="expandBgInfo" class="cont">
       <div class="keyValCont qAndACont">
@@ -194,7 +250,7 @@
 		</div>
 
 
-    <expandBtn title="Medical Information" @onToggle="expandMedInfo = $event" style="margin-top : 20px"/>
+    <expandBtn title="Medical Information" @onToggle="expandMedInfo = $event" style="margin-top : 20px" v-if="user.user.type !== 'ce-only'"/>
 
     <div v-if="expandMedInfo" class="cont">
       <div class="keyValCont qAndACont">
@@ -214,7 +270,7 @@
 
 		</div>
 
-    <div class="hori_cont" style="margin-top : 20px">
+    <div class="hori_cont" style="margin-top : 20px" v-if="user.user.type !== 'ce-only'">
       <expandBtn title="Training Information" @onToggle="expandMembershipInfo = $event"/>
 
 
@@ -249,7 +305,7 @@
     </div>
 
 
-    <div v-if="expandMembershipInfo && memberships" class="cont">
+    <div v-if="expandMembershipInfo && memberships && user.user.type !== 'ce-only'" class="cont">
       <div class="empty" v-if="memberships.length <= 0">
         No Trainings
       </div>
@@ -363,7 +419,7 @@
 
     </div> -->
 
-    <expandBtn title="Orders" @onToggle="expandOrders = $event" style="margin-top : 20px"/>
+    <expandBtn title="Orders" @onToggle="expandOrders = $event" style="margin-top : 20px" v-if="user.user.type !== 'ce-only'"/>
 
     <div v-if="expandOrders" class="cont">
       <div class="empty" v-if="user.orders.length <= 0">

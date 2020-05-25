@@ -9,9 +9,9 @@ if (token !== undefined && token !== null && token !== "") {
 
 
 
-// const baseURL = 'http://localhost:3001/';
+const baseURL = 'http://localhost:3001/';
 // const baseURL = 'https://api-staging.mybarrefitness.com/';
-const baseURL = 'https://api.mybarrefitness.com/';
+// const baseURL = 'https://api.mybarrefitness.com/';
 axios.defaults.baseURL = baseURL;
 
 export const HTTP = axios.create({

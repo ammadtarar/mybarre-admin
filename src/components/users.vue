@@ -13,7 +13,7 @@
 							Search
 						</a>
 
-						<a class="bt_container" v-if="keyword !== '' || userStatus !== 'null'" @click="clearSearch">
+						<a class="bt_container" v-if="keyword !== '' || userStatus !== 'null' || userType !== 'null'" @click="clearSearch">
 							Clear Search
 						</a>
 					</div>
@@ -30,12 +30,13 @@
 		          <th  style="width : 10">FIRST NAME</th>
 							<th  style="width : 10">FAMILY NAME</th>
 							<th  style="width : 10">NICKNAME</th>
+							<th  style="width : 6">TYPE</th>
 		          <th  style="width : 8%">EMAIL</th>
 		          <th  style="width : 8%">PHONE</th>
-							<th  style="width : 8%">GENDER</th>
-							<th  style="width : 8%">WECHAT ID</th>
+							<th  style="width : 6%">GENDER</th>
+							<th  style="width : 6%">WECHAT ID</th>
 							<th  style="width : 8%">COURSE</th>
-							<th  style="width : 10%">STATUS</th>
+							<th  style="width : 8%">STATUS</th>
 							<th  style="width : 8%">EXPIRY</th>
 							<th  style="width : 8%">ACTIONS</th>
 		        </tr>
@@ -46,6 +47,7 @@
 							<td >{{user.first_name || 'N/A'}}</td>
 							<td >{{user.last_name || 'N/A'}}</td>
 							<td >{{user.nickname || 'N/A'}}</td>
+							<td >{{user.type.replaceAll("-" , " ").toUpperCase() || 'N/A'}}</td>
 		          <td >{{user.email || 'N/A'}}</td>
 							<td >{{user.phone || 'N/A'}}</td>
 		          <td >{{user.gender ? user.gender.toUpperCase() : 'N/A' || 'N/A'}}</td>
@@ -88,6 +90,18 @@
 									{{item.replaceAll("-" , " ").toUpperCase()}}
 								</option>
 						</select>
+
+						<label class="inputTitle spacing30">User Type</label>
+						<select v-model="userType" >
+							<option disabled value="null">Select one type</option>
+								<option
+								v-for="item in types"
+									v-bind:value="item"
+									v-bind:key="item">
+									{{item.replaceAll("-" , " ").toUpperCase()}}
+								</option>
+						</select>
+
 					</div>
 					<div class="buttonsWrapper" slot="footer">
 						<div class="bottonsContainer" >
@@ -128,19 +142,24 @@ var NotificationsController = require("../components/NotificationsController.js"
 				keyword: "",
 				userStatus : 'null',
 				statuses: [
-				'pre-instructor', // MEANS USER PAIDED AND SIGNED UP
-				'pre-instructor-tbc', //USER DID NOT ATTEND TRAINING CLASSES
-				'instructor-in-training', // USER ATTENDED THE TRAINING CLASSES
-				'training-videos-submitted', // USER SUBMITTED TRAINING VIDEOS AFTER TRAINING CLASSES
-				'exam-passed', // SUBMITTED TRAINING VIDEOS PASSED
-				'exam-failed', // SUBMITTED TRAINING VIDEOS FAILED
-				'license-fee-paid', // USER PASSED THE EXAM AND PAID THE LICENSE FEE
-				'licensed-instructor' // USER PASSED THE EXAM AND PAID THE LICENSE FEE
-			]
+					'pre-instructor', // MEANS USER PAIDED AND SIGNED UP
+					'pre-instructor-tbc', //USER DID NOT ATTEND TRAINING CLASSES
+					'instructor-in-training', // USER ATTENDED THE TRAINING CLASSES
+					'training-videos-submitted', // USER SUBMITTED TRAINING VIDEOS AFTER TRAINING CLASSES
+					'exam-passed', // SUBMITTED TRAINING VIDEOS PASSED
+					'exam-failed', // SUBMITTED TRAINING VIDEOS FAILED
+					'license-fee-paid', // USER PASSED THE EXAM AND PAID THE LICENSE FEE
+					'licensed-instructor' // USER PASSED THE EXAM AND PAID THE LICENSE FEE
+				],
+				userType : 'null',
+				types : ['full' , 'ce-only']
 	    }
 	  },
 		methods:{
 			getMembershipStatus(user){
+				if (user.type === "ce-only") {
+					return "N/A";
+				}
 				const memberships = user.memberships || null;
 				if (memberships === null) {
 					return 'Not Enrolled Yet';
@@ -213,6 +232,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 				this.type = "null";
 				this.level = "null";
 				this.userStatus = "null";
+				this.userType = "null";
 				this.getUsers()
 				this.showSeachModal = false;
 			},
@@ -230,6 +250,9 @@ var NotificationsController = require("../components/NotificationsController.js"
 				}
 				if (this.userStatus !== undefined && this.userStatus !== null && this.userStatus !== "" && this.userStatus !== "null") {
 					url = url + "&status=" + this.userStatus;
+				}
+				if (this.userType !== undefined && this.userType !== null && this.userType !== "" && this.userType !== "null") {
+					url = url + "&type=" + this.userType;
 				}
 
 				HTTP.get(url ,  {
