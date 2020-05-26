@@ -42,6 +42,7 @@
 		      </thead>
 		      <tbody>
 		        <tr  v-bind:key="user.id" v-for="user in applicants">
+							
 							<td >{{user.id || 'N/A'}}</td>
 							<td >{{user.first_name || 'N/A'}}</td>
 							<td >{{user.last_name || 'N/A'}}</td>
