@@ -27,11 +27,17 @@
 
 		<div class="section">
 			Videos ( {{videos.length}} )
+      <div class="editIndexes">
+        Update Sequence
+      </div>
 		</div>
+
+
 		<div class="grid">
 			<div class="item" v-for="item in videos">
         <img class="hoverItem del" @click="displayDeleteModal(item)" src="../assets/ic_delete.png"/>
         <img class="hoverItem rename" @click="displayRenameModal(item)" src="../assets/ic_edit.png"/>
+        <div class="hoverItem thumbBtn" @click="displayEditThumbModal(item)">Edit Thumbnail</div>
 				<VideoCard :model="item" @showPreview="displayVideoPreview"></VideoCard>
 			</div>
 		</div>
@@ -137,6 +143,43 @@
 
 
 
+
+
+  <modal v-if="showThumbModal"  @close="showThumbModal = false; thumbObject = {}" size="size">
+      <h3 slot="header" style="text-align : left;">Update Video Thumbnail</h3>
+      <div slot="body" class="modalBody">
+
+        <label class="inputTitle">Video Name</label>
+        <label style="color : #37474f">{{thumbObject.name}}</label>
+
+        <label class="inputTitle spacing30">Current Thumbnail</label>
+        <img  class="thumb":src="thumbObject.thumb_url">
+
+        <label class="inputTitle spacing30">COVER IMAGE</label>
+        <img  v-if="!url" src="../assets/image_placeholder.jpg" class="imgPreviewSmall">
+        <img v-if="url" :src="url" class="imgPreview">
+
+      </div>
+
+      <div class="buttonsWrapper" slot="footer">
+        <div class="bottonsContainer" style="width : 100% !important">
+          <div style="width : 50% ; height : 100% ; display : flex ; margin-left : 10px">
+            <label class="prodImgPicker">
+              Select Files
+              <input type="file" accept="image/x-png,image/gif,image/jpeg" @change="onFileChange" />
+            </label>
+          </div>
+          <button type="button" class="bt neg" @click="showThumbModal = false ; thumbObject = {}">Abort</button>
+          <button type="button" class="bt pos"  style="width : 200px !important" @click="uploadFile">Update Thumbnail</button>
+        </div>
+      </div>
+
+  </modal>
+
+
+
+
+
   </div>
 </template>
 
@@ -147,7 +190,7 @@ import DocCard from "../components/docCard.vue";
 import FilesUploadModal from "../components/filesUploadModal.vue";
 import Modal from "../components/modal.vue";
 import pdfviewer from 'vue-pdfviewer'
-
+import ExpandBtn from "../components/expadBtn.vue";
 import {
     HTTP, URLS
 }
@@ -184,7 +227,11 @@ var NotificationsController = require("../components/NotificationsController.js"
         ],
         allFiles: [],
         filterStage: "null",
-        renameStages : []
+        renameStages : [],
+        thumbObject: {},
+        showThumbModal: false,
+        url: null,
+				imgFile :null,
 			}
 		},
 		components:{
@@ -193,9 +240,57 @@ var NotificationsController = require("../components/NotificationsController.js"
 			DocCard,
 			FilesUploadModal,
       Modal,
-      pdfviewer
+      pdfviewer,
+      ExpandBtn
 		},
 		methods:{
+      onFileChange(e) {
+        const file = e.target.files[0];
+        this.url = URL.createObjectURL(file);
+        this.imgFile = file;
+      },
+      uploadFile(){
+				if (this.imgFile === null) {
+					return;
+				}
+				const ctx = this;
+				NotificationsController.showActivityIndicator();
+				var formData = new FormData();
+				formData.append("file", this.imgFile);
+				var url = URLS.FILE.UPLOAD;
+        url = url + "?type=thumbnail";
+				var axios = HTTP.post(url, formData, {
+					headers: {
+						Authorization: localStorage.getItem("token")
+					}
+				})
+				.then(function(response){
+          const imgUrl = response.data.url;
+
+          HTTP.patch(URLS.FILE.BY_ID.replace(':id' , ctx.thumbObject.id) , {thumb_url : imgUrl} , {
+              headers: {
+                Authorization: localStorage.getItem("token")
+              },
+            })
+              .then(function(res) {
+                  ctx.showThumbModal = false;
+                  ctx.thumbObject = null;
+                  ctx.getTrainingData();
+                  NotificationsController.hideActivityIndicator();
+                  NotificationsController.showNotification('success' , 'Video thumbnail uploaded');
+              })
+
+				})
+				.catch(function(err){
+					NotificationsController.hideActivityIndicator();
+					console.log(err);
+					NotificationsController.showErrorNotification(err);
+				})
+			},
+      displayEditThumbModal(item){
+        this.thumbObject = item;
+        this.showThumbModal = true;
+      },
 			closepdf(){
           this.isshowpdf = false
       },
@@ -426,6 +521,8 @@ var NotificationsController = require("../components/NotificationsController.js"
 	text-align: left;
 	border-bottom: 0.5px solid black;
 	margin-top: 20px;
+  display : flex;
+  align-items: center;
 }
 
 .training .grid{
@@ -544,5 +641,51 @@ input[type="checkbox"]:checked {
   padding: 2px 6px 2px 6px;
   border-radius: 4px;
 
+}
+
+.thumbBtn{
+  height: 22px;
+  width: auto !important;
+  padding: 2px 4px 2px 4px;
+  font-size: 12px;
+  line-height : 22px;
+  font-weight: bold;
+  background : #F44336;
+  color: white;
+  border: 1px solid #F44336;
+  border-radius : 4px;
+  left: 90px;
+  transition: all 0.25s;
+}
+
+.thumbBtn:hover{
+  padding: 4px 12px 4px 12px;
+  font-size: 14px;
+  box-shadow: 0px 0px 10px 0px gray;
+}
+
+.thumb{
+  width: 100px;
+  height: 100px;
+  border : 1px solid white;
+}
+
+.editIndexes{
+  height:20px;
+  line-height: 20px;
+  margin-left : auto;
+  font-size : 12px;
+  font-weight: bold;
+  color : black;
+  border : 1px solid black;
+  padding : 4px 6px 4px 6px;
+  border-radius : 4px;
+  transition: 0.25s all;
+}
+
+.editIndexes:hover{
+  background: black;
+  color: white;
+  padding : 4px 16px 4px 16px;
 }
 </style>

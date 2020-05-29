@@ -216,7 +216,7 @@
 </style>
 
 <script>
-
+import axios from 'axios';
 import {
     HTTP, URLS
 }
@@ -276,6 +276,22 @@ export default {
             localStorage.setItem('id', response.id);
             localStorage.setItem('token',response.token);
             localStorage.setItem('type',response.type);
+
+            console.log();
+            console.log();
+            console.log("HEADERS BEFORE");
+            console.log(axios.defaults.headers);
+            console.log();
+
+
+
+            axios.defaults.headers.common['Authorization'] = response.token;
+
+            console.log();
+            console.log("HEADERS AFTER");
+            console.log(axios.defaults.headers);
+            console.log();
+            console.log();
 
               NotificationsController.showNotification('success' , 'Login successful')
               ctx.$router.push('home');

@@ -275,6 +275,7 @@ import Store from '../components/store.vue';
 import User from '../components/user.vue';
 import Coupons from '../components/coupons.vue';
 import Settings from '../components/settings.vue';
+import axios from 'axios';
 export default {
     name: 'home',
     components: {
@@ -410,6 +411,14 @@ export default {
           this.$router.push('/');
           return
         }
+
+
+        axios.defaults.headers.common['Authorization'] = token;
+        console.log();
+        console.log("HEADERS IN HOME");
+        console.log(axios.defaults.headers);
+        console.log();
+        console.log();
 
         this.$el.addEventListener('itemSelected', e => console.log("got it in home"));
         this.current = this.pages[0];

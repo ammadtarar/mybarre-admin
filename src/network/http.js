@@ -2,17 +2,22 @@ import axios from 'axios';
 
 
 
+
+
+
+
+const baseURL = 'http://localhost:3001/';
+// const baseURL = 'https://api-staging.mybarrefitness.com/';
+// const baseURL = 'https://api.mybarrefitness.com/';
+axios.defaults.baseURL = baseURL;
+
 let token = localStorage.getItem('token');
+console.log("TOKEN IN HTTPS");
+console.log(token);
 if (token !== undefined && token !== null && token !== "") {
+  console.log("Setting token in https file");
   axios.defaults.headers.common['Authorization'] = token;
 }
-
-
-
-// const baseURL = 'http://localhost:3001/';
-// const baseURL = 'https://api-staging.mybarrefitness.com/';
-const baseURL = 'https://api.mybarrefitness.com/';
-axios.defaults.baseURL = baseURL;
 
 export const HTTP = axios.create({
   baseURL: process.env.VUE_APP_API,

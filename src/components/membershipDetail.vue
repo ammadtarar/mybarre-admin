@@ -424,7 +424,7 @@ var NotificationsController = require("../components/NotificationsController.js"
         const ctx = this;
         var mUrl = URLS.MEMBERSHIP.UPDATE_STATUS.replace(':id' , this.membership.id);
         mUrl = mUrl.replace(':status' , this.newStatus);
-        HTTP.post(mUrl,  {
+        HTTP.post(mUrl, {} , {
           headers: {
             Authorization: localStorage.getItem("token")
           }
@@ -505,7 +505,7 @@ var NotificationsController = require("../components/NotificationsController.js"
         const ctx = this;
         var mUrl = URLS.MEMBERSHIP.EXTEND_VIDEO_SUBMISSION_DATE.replace(':id' , this.membership.id);
         mUrl = mUrl.replace(':date' , ctx.new_submission_date);
-        HTTP.patch(mUrl,  {
+        HTTP.patch(mUrl,  {} ,{
           headers: {
             Authorization: localStorage.getItem("token")
           }
