@@ -6,9 +6,9 @@ import axios from 'axios';
 
 
 
-const baseURL = 'http://localhost:3001/';
+// const baseURL = 'http://localhost:3001/';
 // const baseURL = 'https://api-staging.mybarrefitness.com/';
-// const baseURL = 'https://api.mybarrefitness.com/';
+const baseURL = 'https://api.mybarrefitness.com/';
 axios.defaults.baseURL = baseURL;
 
 let token = localStorage.getItem('token');
@@ -35,6 +35,7 @@ export const URLS = {
   FILE: {
     UPLOAD: 'file/upload',
     BY_ID: 'file/:id',
+    UPDATE_INDEXES : 'files/update/indexes'
   },
   USER: {
     LIST_ALL: 'user/list/all',

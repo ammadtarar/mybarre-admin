@@ -94,8 +94,12 @@
 
 		<div class="section" style="margin-top : 50px" v-if="isEditMode">
 			Videos
+      <div class="editIndexes" @click="sortableItems = videos; showVideoSortingModal = true">
+        Update Sequence
+      </div>
 		</div>
     <expandBtn title="Videos" @onToggle="expandVideos = $event" default="true" v-if="!isEditMode" style="margin-top : 20px"/>
+
 
 
     <div class="empty" v-if="expandVideos && videos.length <= 0">
@@ -106,7 +110,7 @@
 			<div class="item" v-for="item in videos">
         <img class="hoverItem del" @click="displayDeleteModal(item)" src="../assets/ic_delete.png"/>
         <img class="hoverItem rename" @click="displayRenameModal(item)" src="../assets/ic_edit.png"/>
-        <div class="hoverItem thumbBtn" @click="displayEditThumbModal(item)">Edit Thumbnail</div>
+        <div class="hoverItem thumbBtn" @click="displayEditThumbModal(item)">Change Thumbnail</div>
 				<VideoCard :model="item" @showPreview="displayVideoPreview"></VideoCard>
 			</div>
 		</div>
@@ -114,6 +118,9 @@
 
     <div class="section" style="margin-top : 50px" v-if="isEditMode">
 			Images
+      <div class="editIndexes" @click="sortableItems = images; showVideoSortingModal = true">
+        Update Sequence
+      </div>
 		</div>
     <expandBtn title="Images" @onToggle="expandImages = $event" default="true" v-if="!isEditMode" style="margin-top : 20px"/>
 
@@ -132,6 +139,9 @@
 
     <div class="section" style="margin-top : 50px" v-if="isEditMode">
 			Documents
+      <div class="editIndexes" @click="sortableItems = documents; showVideoSortingModal = true">
+        Update Sequence
+      </div>
 		</div>
     <expandBtn title="Documents" @onToggle="expandDocuments = $event" default="true" v-if="!isEditMode" style="margin-top : 20px"/>
 
@@ -215,6 +225,38 @@
 
   </modal>
 
+
+
+  <modal v-if="showVideoSortingModal"  @close="showVideoSortingModal = false;" size="big">
+      <h3 slot="header" style="text-align : left;">Update Videos Sequence</h3>
+      <div slot="body" class="modalBody">
+        <table>
+        <thead>
+          <tr  style="text-align : center">
+            <th  style="width : 5%">ID</th>
+            <th  style="width : 70%">NAME</th>
+            <th  style="width : 25%">INDEX</th>
+          </tr>
+        </thead>
+        <tbody style="text-align : center">
+          <tr  v-bind:key="item.id" v-for="item in sortableItems">
+            <td >{{item.id || 'N/A'}}</td>
+            <td >{{item.name || 'N/A'}}</td>
+            <td >
+              <input class="fileTitle" style="text-align : center"  v-model="item.index" type="number" placeholder="Please enter file index here" ></input>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      </div>
+      <div class="buttonsWrapper" slot="footer">
+        <div class="bottonsContainer" >
+          <button type="button" class="bt neg" @click="showVideoSortingModal = false ;">Abort</button>
+          <button type="button" class="bt pos" @click="updateVideosSequence">Update</button>
+        </div>
+      </div>
+  </modal>
+
   </div>
 </template>
 
@@ -266,9 +308,41 @@ var NotificationsController = require("../components/NotificationsController.js"
        showThumbModal: false,
        thumbUrl: null,
        thumbImg :null,
+       showVideoSortingModal : false,
+       sortableItems: []
 		 };
 	 },
 		methods:{
+      updateVideosSequence(){
+
+        var items = [];
+        this.sortableItems.forEach((item, i) => {
+          items.push({
+            id : item.id,
+            index : parseInt(item.index)
+          })
+        });
+        const ctx = this;
+        HTTP.post(URLS.FILE.UPDATE_INDEXES, items , {
+            headers: {
+              Authorization: localStorage.getItem("token")
+            },
+          })
+            .then(function(res) {
+                NotificationsController.hideActivityIndicator();
+                NotificationsController.showNotification('success' , 'Indexes updated successfully');
+                ctx.sortableItems = []
+                ctx.showVideoSortingModal = false;
+                ctx.getTrainingData();
+            })
+            .catch(function(error) {
+              ctx.sortableItems = []
+              ctx.showVideoSortingModal = false;
+              NotificationsController.hideActivityIndicator();
+              NotificationsController.showErrorNotification(error);
+            });
+
+      },
       onThumbFileChanged(e) {
         const file = e.target.files[0];
         this.thumbUrl = URL.createObjectURL(file);
@@ -300,6 +374,8 @@ var NotificationsController = require("../components/NotificationsController.js"
               .then(function(res) {
                   ctx.showThumbModal = false;
                   ctx.thumbObject = null;
+                  ctx.thumbUrl = null;
+                  ctx.thumbImg = null;
                   ctx.getTrainingData();
                   NotificationsController.hideActivityIndicator();
                   NotificationsController.showNotification('success' , 'Video thumbnail uploaded');
@@ -501,6 +577,19 @@ var NotificationsController = require("../components/NotificationsController.js"
               ctx.documents.push(file);
             }
           });
+
+          ctx.videos.sort(function(a, b) {
+            return a.index - b.index;
+          });
+
+          ctx.images.sort(function(a, b) {
+            return a.index - b.index;
+          });
+
+          ctx.documents.sort(function(a, b) {
+            return a.index - b.index;
+          });
+          
           NotificationsController.hideActivityIndicator();
         })
         .catch(function(error) {
@@ -645,6 +734,8 @@ var NotificationsController = require("../components/NotificationsController.js"
 	text-align: left;
 	border-bottom: 2px solid black;
 	margin-top: 20px;
+  display : flex;
+  align-items: center;
 }
 
 .training .grid{
@@ -775,4 +866,26 @@ var NotificationsController = require("../components/NotificationsController.js"
   border : 1px solid white;
 }
 
+.sectionCont{
+  display: flex;
+}
+
+.editIndexes{
+  height:20px;
+  line-height: 20px;
+  margin-left : 20px;
+  font-size : 12px;
+  font-weight: bold;
+  color : black;
+  border : 1px solid black;
+  padding : 4px 6px 4px 6px;
+  border-radius : 4px;
+  transition: 0.25s all;
+}
+
+.editIndexes:hover{
+  background: black;
+  color: white;
+  padding : 4px 16px 4px 16px;
+}
 </style>

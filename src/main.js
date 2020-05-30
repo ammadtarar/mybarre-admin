@@ -18,6 +18,7 @@ Vue.use(Chartkick.use(Chart))
 
 Vue.config.productionTip = false
 
+
 Vue.mixin({
   components: {
 
