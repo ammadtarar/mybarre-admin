@@ -445,7 +445,7 @@ var NotificationsController = require("../components/NotificationsController.js"
       },
       moveToCourse(){
         const ctx = this;
-        var mUrl = URLS.MEMBERSHIP.CHANGE.replace(':userId' , this.user.user.id);
+        var mUrl = URLS.MEMBERSHIP.CHANGE.replace(':userId' , this.membership.user.id);
         mUrl = mUrl.replace(':courseId' , ctx.selectedCourseId);
         HTTP.post(mUrl,  {
           headers: {
@@ -453,6 +453,10 @@ var NotificationsController = require("../components/NotificationsController.js"
           }
         })
         .then(function(res) {
+          console.log("mmebership change response");
+          const newMembership = res.data.data;
+          ctx.membershipId = newMembership.id;
+          ctx.mmebership = newMembership;
           ctx.getMembership()
           ctx.showMoveToCourseModal = false;
           NotificationsController.showNotification('success' , 'User moved to the new course successfully');
@@ -545,6 +549,7 @@ var NotificationsController = require("../components/NotificationsController.js"
           }
         })
         .then(function(res) {
+          console.log("inside response for get membership");
           ctx.membership = res.data.data;
           ctx.newStatus = ctx.membership.status;
           NotificationsController.hideActivityIndicator();
