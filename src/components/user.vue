@@ -11,9 +11,157 @@
       <label class="pageDesc" style="font-family : 'Bold' ; font-size : 24px">User Detail</label>
     </div>
 
-    <expandBtn title="Basic Information" @onToggle="expandBasicInfo = $event" default="true" style="margin-top : 20px"/>
 
-    <div v-if="expandBasicInfo && user" class="cont">
+    <div class="hori_cont" style="margin-top : 20px">
+
+      <expandBtn title="Basic Information" @onToggle="expandBasicInfo = $event" default="true" style="margin-top : 20px"/>
+
+			<div class="actions_cont" v-if="expandBasicInfo && user">
+				<div class="btAction btActionCentered orange" v-if="!editBasicInfo" @click="editUser = user;editBasicInfo = true">
+          UPDATE INFORMTION
+				</div>
+
+
+        <div class="btAction btActionCentered red" v-if="editBasicInfo" @click="editBasicInfo = false; editUser = null">
+          CANCEL
+				</div>
+
+        <div class="btAction btActionCentered green" v-if="editBasicInfo" @click="onSaveUserInfo">
+          SAVE
+				</div>
+
+			</div>
+
+
+
+		</div>
+
+    <div v-if="editUser && editBasicInfo" class="cont">
+
+      
+
+      <div class="half-half" >
+        <div class="keyValCont">
+          <label class="key">First name</label>
+          <input type="text" v-model="editUser.user.first_name" placeholder="Enter first name" class="textInput" />
+        </div>
+        <div class="keyValCont">
+          <label class="key">Family name</label>
+          <input type="text" v-model="editUser.user.last_name" placeholder="Enter last name" class="textInput" />
+        </div>
+      </div>
+
+      <div class="half-half" >
+        <div class="keyValCont">
+          <label class="key">Nickname</label>
+          <input type="text" v-model="editUser.user.nickname" placeholder="Enter nick name" class="textInput" />
+        </div>
+        <div class="keyValCont">
+          <label class="key">Name on Certificate</label>
+          <input type="text" v-model="editUser.user.certificate_name" placeholder="Enter certificate name" class="textInput" />
+        </div>
+      </div>
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Email</label>
+          <input type="text" v-model="editUser.user.email" placeholder="Enter email" class="textInput" />
+        </div>
+        <div class="keyValCont">
+          <label class="key">Phone</label>
+          <input type="text" v-model="editUser.user.phone" placeholder="Enter phone" class="textInput" />
+        </div>
+      </div>
+
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Gender</label>
+          <select class="selectRoundBorder" v-model="editUser.user.gender" >
+							<option disabled value="null">Select one gender</option>
+								<option
+								v-for="item in genders"
+									v-bind:value="item"
+									v-bind:key="item">
+									{{item.replaceAll("-" , " ").toUpperCase()}}
+								</option>
+					</select>
+
+        </div>
+        <div class="keyValCont">
+          <label class="key">Date of Birth</label>
+          <!-- <label class="val">{{editUser.user.dob || 'N/A'}}</label> -->
+          <input type="date" v-model="editUser.user.dob"  placeholder="Select date of birth" class="textInput" />
+        </div>
+      </div>
+
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">City</label>
+          <input type="text" v-model="editUser.user.city" placeholder="Enter city" class="textInput" />
+        </div>
+        <div class="keyValCont">
+          <label class="key">Address</label>
+          <input type="text" v-model="editUser.user.address" placeholder="Enter address" class="textInput" />
+        </div>
+      </div>
+
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Nationality</label>
+          <input type="text" v-model="editUser.user.nationality" placeholder="Enter nationality" class="textInput" />
+        </div>
+        <div class="keyValCont">
+          <label class="key">Wechat ID/Username</label>
+          <input type="text" v-model="editUser.user.wechat_id" placeholder="Enter wechat id" class="textInput" />
+        </div>
+      </div>
+
+       <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Training Top Size</label>
+
+          <select class="selectRoundBorder" v-model="editUser.user.top_size" >
+							<option disabled value="null">Select one top size</option>
+								<option
+								v-for="item in topSizes"
+									v-bind:value="item"
+									v-bind:key="item">
+									{{item.replaceAll("-" , " ").toUpperCase()}}
+								</option>
+					</select>
+
+        </div>
+        <div class="keyValCont">
+          <label class="key">Training Socks Size</label>
+
+          <select class="selectRoundBorder" v-model="editUser.user.sock_size" >
+							<option disabled value="null">Select one sock size</option>
+								<option
+								v-for="item in sockSizes"
+									v-bind:value="item"
+									v-bind:key="item">
+									{{item}}
+								</option>
+					</select>
+        </div>
+      </div>
+
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Ocuupation</label>
+          <input type="text" v-model="editUser.user.occupation" placeholder="Enter occupation" class="textInput" />
+        </div>
+      </div>
+
+     
+
+    </div>
+
+    <div v-if="expandBasicInfo && user && !editBasicInfo" class="cont">
 
       <div  >
         <div class="tripleKeyValCont">
@@ -117,9 +265,9 @@
     </div>
 
 
-    <expandBtn title="Studio Information" @onToggle="expandStudioInfo = $event" style="margin-top : 20px"/>
+    <expandBtn title="Studio Information" v-if="!editBasicInfo" @onToggle="expandStudioInfo = $event" style="margin-top : 20px"/>
 
-    <div v-if="expandStudioInfo" class="cont">
+    <div v-if="expandStudioInfo && !editBasicInfo" class="cont">
       <div class="half-half">
         <div class="keyValCont">
           <label class="key">Studio Name</label>
@@ -153,9 +301,9 @@
     </div>
 
 
-    <expandBtn title="Background & Motivation" @onToggle="expandBgInfo = $event" style="margin-top : 20px"/>
+    <expandBtn title="Background & Motivation" v-if="!editBasicInfo" @onToggle="expandBgInfo = $event" style="margin-top : 20px"/>
 
-    <div v-if="expandBgInfo" class="cont">
+    <div v-if="expandBgInfo && !editBasicInfo" class="cont">
       <div class="keyValCont qAndACont">
         <label class="key">How did you find out about the MYbarre Instructor Training Course?</label>
         <label class="val answer">{{user.user.find_out || 'N/A'}}</label>
@@ -194,9 +342,9 @@
 		</div>
 
 
-    <expandBtn title="Medical Information" @onToggle="expandMedInfo = $event" style="margin-top : 20px"/>
+    <expandBtn title="Medical Information" v-if="!editBasicInfo" @onToggle="expandMedInfo = $event" style="margin-top : 20px"/>
 
-    <div v-if="expandMedInfo" class="cont">
+    <div v-if="expandMedInfo && !editBasicInfo" class="cont">
       <div class="keyValCont qAndACont">
         <label class="key">Have you ever been told you have a heart condition？</label>
         <label class="val answer">{{user.user.heart_condition ? 'Yes' : 'No'}}</label>
@@ -215,41 +363,12 @@
 		</div>
 
     <div class="hori_cont" style="margin-top : 20px">
-      <expandBtn title="Training Information" @onToggle="expandMembershipInfo = $event"/>
-
-
-
-
-<!--
-      <div class="actions_cont" v-if="expandMembershipInfo">
-        <div class="action_btn" @click="displayExtendModal">
-          Extend Videos Submission Date
-        </div>
-
-        <div class="action_btn" @click="displayMoveToCourseModal">
-          Move to Another Course
-        </div>
-
-        <div class="action_btn" @click="showUpdateStatusModal = true">
-          Update  Status
-        </div>
-
-        <div class="action_btn" @click="showUploadLicenseModal = true">
-          Upload Certificate
-        </div>
-
-        <div class="action_btn" v-if="membership.certificate_url" @click="showCertificate()">
-          View Certificate
-        </div>
-
-      </div> -->
-
-
+      <expandBtn title="Training Information" v-if="!editBasicInfo"@onToggle="expandMembershipInfo = $event"/>
 
     </div>
 
 
-    <div v-if="expandMembershipInfo && memberships" class="cont">
+    <div v-if="expandMembershipInfo && memberships && !editBasicInfo" class="cont">
       <div class="empty" v-if="memberships.length <= 0">
         No Trainings
       </div>
@@ -283,89 +402,11 @@
         </tbody>
       </table>
     </div>
-    <!-- <div v-if="expandMembershipInfo && membership" class="cont">
-
-      <div class="half-half" >
-        <div class="keyValCont">
-          <label class="key">Start</label>
-          <label class="val">{{membership.start || 'N/A'}}</label>
-        </div>
-        <div class="keyValCont">
-          <label class="key">End</label>
-          <label class="val">{{membership.end || 'N/A'}}</label>
-        </div>
-      </div>
 
 
-      <div class="half-half" >
-        <div class="keyValCont">
-          <label class="key">Videos Submission Date</label>
-          <label class="val">{{membership.video_submission_date || 'N/A'}}</label>
-        </div>
-        <div class="keyValCont">
-          <label class="key">Status / Stage</label>
-          <label class="val" style="text-transform: capitalize;">{{membership.status.replace('-' , ' ') || 'N/A'}}</label>
-        </div>
-      </div>
+    <expandBtn title="Orders" v-if="!editBasicInfo" @onToggle="expandOrders = $event" style="margin-top : 20px"/>
 
-      <div class="half-half" >
-        <div class="keyValCont">
-          <label class="key">Price Paid</label>
-          <label class="val">{{membership.price || 'N/A'}}</label>
-        </div>
-        <div class="keyValCont">
-          <label class="key">Wechat Payment Out-Trade-No</label>
-          <label class="val">{{membership.out_trade_no || 'N/A'}}</label>
-        </div>
-      </div>
-
-      <div class="half-half" >
-        <div class="keyValCont">
-          <label class="key">Enrolled Course ID</label>
-          <label class="val">{{membership.course.id || 'N/A'}}</label>
-        </div>
-        <div class="keyValCont">
-          <label class="key">Enrolled Course Name</label>
-          <label class="val">{{membership.course.name || 'N/A'}}</label>
-        </div>
-      </div>
-
-
-      <div class="half-half" >
-        <div class="keyValCont">
-          <label class="key">Enrolled Course Start Date</label>
-          <label class="val">{{membership.course.start || 'N/A'}}</label>
-        </div>
-        <div class="keyValCont">
-          <label class="key">Enrolled Course End Date</label>
-          <label class="val">{{membership.course.end || 'N/A'}}</label>
-        </div>
-      </div>
-
-
-    </div> -->
-
-    <!-- <expandBtn v-if="expandMembershipInfo" title="Training Videos" @onToggle="expandTrainingVideos = $event"/>
-
-
-
-    <div v-if="expandTrainingVideos" class="cont">
-      <div class="empty" v-if="membership.training_videos.length <= 0">
-        No Training Videos Found
-      </div>
-
-      <div class="grid" v-if="membership.training_videos.length > 0">
-  			<div class="item" v-for="item in membership.training_videos">
-  				<VideoCard :model="item" @showPreview="displayVideoPreview"></VideoCard>
-  			</div>
-  		</div>
-
-
-    </div> -->
-
-    <expandBtn title="Orders" @onToggle="expandOrders = $event" style="margin-top : 20px"/>
-
-    <div v-if="expandOrders" class="cont">
+    <div v-if="expandOrders && !editBasicInfo" class="cont">
       <div class="empty" v-if="user.orders.length <= 0">
         No Orders
       </div>
@@ -540,7 +581,7 @@
 </template>
 
 <script>
-
+import moment from "moment";
 import Modal from "../components/modal.vue";
 import ExpandBtn from "../components/expadBtn.vue";
 import VideoCard from "../components/videoCard.vue";
@@ -562,6 +603,8 @@ var NotificationsController = require("../components/NotificationsController.js"
 		props: ['id'],
 	 data() {
 		 return {
+       editUser: null,
+       editBasicInfo : false,
        user : null,
        expandBasicInfo : true,
        expandStudioInfo: false,
@@ -580,6 +623,7 @@ var NotificationsController = require("../components/NotificationsController.js"
        selectedCourseId : -1,
        showUpdateStatusModal: false,
        statuses: [
+         'temporary-freeze',
 				'pre-instructor', // MEANS USER PAIDED AND SIGNED UP
 				'pre-instructor-tbc', //USER DID NOT ATTEND TRAINING CLASSES
 				'instructor-in-training', // USER ATTENDED THE TRAINING CLASSES
@@ -588,7 +632,20 @@ var NotificationsController = require("../components/NotificationsController.js"
 				'exam-failed', // SUBMITTED TRAINING VIDEOS FAILED
         'license-fee-paid',
 				'licensed-instructor' // USER PASSED THE EXAM AND PAID THE LICENSE FEE
-			],
+      ],
+      genders: [
+        'male',
+        'female'
+      ],
+      topSizes: [
+        'small',
+        'medium',
+        'large'
+      ],
+      sockSizes: [
+        '35-38',
+        '38-40'
+      ],
       newStatus : '',
       showUploadLicenseModal: false,
       url: null,
@@ -598,6 +655,32 @@ var NotificationsController = require("../components/NotificationsController.js"
 		 };
 	 },
 		methods:{
+      onSaveUserInfo(){
+        var user = this.editUser.user;
+        const ctx = this;
+        NotificationsController.showActivityIndicator();
+        HTTP.post(URLS.USER.UPDATE_PROFILE.replace(":id" , user.id), user, {
+          headers: {
+            Authorization: localStorage.getItem("token")
+          }
+        })
+        .then(function(response){
+          console.log(response);
+          ctx.editUser = null;
+          ctx.editBasicInfo = false;
+          NotificationsController.hideActivityIndicator();
+          NotificationsController.showNotification('success' , 'User information updated successfully')
+          ctx.getTrainingData();
+          ctx.getMembership();
+        })
+        .catch(function(err){
+          NotificationsController.hideActivityIndicator();
+          console.log(err);
+          NotificationsController.showErrorNotification(err);
+        })
+
+        
+      },
       hideMembershipDetails: function(){
         this.index = 1;
       },
@@ -1181,11 +1264,16 @@ var NotificationsController = require("../components/NotificationsController.js"
 }
 
 .dp{
-  width: 150px;
+  /* width: 150px; */
   height: 150px;
   border-width: 1px solid gray;
   margin-top: 10px;
   background: gray;
+  border: 1px solid gray;
+}
+
+.selectRoundBorder{
+  background : transparent;  border : 0.5px solid black ; border-radius : 4px
 }
 
 </style>

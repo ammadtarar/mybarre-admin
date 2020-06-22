@@ -189,43 +189,6 @@ var NotificationsController = require("../components/NotificationsController.js"
 	flex-direction: column;
 	justify-content: center;
 }
-table{
-	height: 100%;
-	width : 100%;
-	background: #BDBDBD;
-	border-radius: 10px;
-	overflow: auto;
-	transition: all 0.25s;
-}
-
-thead th {
-  position: sticky;
-  top: -20px;
-	background: #BDBDBD;
-}
-
-thead{
-	color: #031b4e;
-	font-size: 18px;
-	position: sticky;
-	top: 0;
-	background: #BDBDBD;
-
-}
-th{
-	height: 50px;
-	font-family: Medium
-}
-
-
-table tr:nth-child(odd) td{
-    background: #E0E0E0;
-		height: 50px;
-}
-table tr:nth-child(even) td{
-    background: #EEEEEE;
-		height: 50px;
-}
 
 
 

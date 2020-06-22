@@ -22,9 +22,6 @@ export default {
 	},
 	ready: function() {},
 	methods: {
-		// closeModal: function() {
-		// 	this.$emit("close");
-		// }
 		next(){
 			if(this.pageNumber >= this.limit){
 				return;
@@ -37,7 +34,7 @@ export default {
 				return;
 			}
 			this.pageNumber = this.pageNumber - 1;
-			this.$emit("onPageChanged");
+			this.$emit("onPageChanged" , this.pageNumber);
 		},
 	},
 	mounted() {

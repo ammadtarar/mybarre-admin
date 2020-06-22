@@ -329,6 +329,7 @@ var NotificationsController = require("../components/NotificationsController.js"
        selectedCourseId : -1,
        showUpdateStatusModal: false,
        statuses: [
+        'temporary-freeze',
 				'pre-instructor', // MEANS USER PAIDED AND SIGNED UP
 				'pre-instructor-tbc', //USER DID NOT ATTEND TRAINING CLASSES
 				'instructor-in-training', // USER ATTENDED THE TRAINING CLASSES
@@ -379,9 +380,7 @@ var NotificationsController = require("../components/NotificationsController.js"
           }
         })
         .then(function(response){
-          console.log(response);
           var url = response.data.url;
-          console.log("URL = " , url);
           NotificationsController.hideActivityIndicator();
 
           HTTP.post(URLS.MEMBERSHIP.UPDATE_CERTIFICATE_URL.replace(':id' , ctx.membershipId) , {certificate_url : url} , {
@@ -407,7 +406,6 @@ var NotificationsController = require("../components/NotificationsController.js"
         })
         .catch(function(err){
           NotificationsController.hideActivityIndicator();
-          console.log(err);
           NotificationsController.showErrorNotification(err);
         })
       },
@@ -436,7 +434,6 @@ var NotificationsController = require("../components/NotificationsController.js"
           NotificationsController.hideActivityIndicator();
         })
         .catch(function(error) {
-          console.log(error);
           ctx.showUpdateStatusModal = false;
           NotificationsController.hideActivityIndicator();
           NotificationsController.showErrorNotification(error);
@@ -447,13 +444,12 @@ var NotificationsController = require("../components/NotificationsController.js"
         const ctx = this;
         var mUrl = URLS.MEMBERSHIP.CHANGE.replace(':userId' , this.membership.user.id);
         mUrl = mUrl.replace(':courseId' , ctx.selectedCourseId);
-        HTTP.post(mUrl,  {
+        HTTP.post(mUrl, {},  {
           headers: {
             Authorization: localStorage.getItem("token")
           }
         })
         .then(function(res) {
-          console.log("mmebership change response");
           const newMembership = res.data.data;
           ctx.membershipId = newMembership.id;
           ctx.mmebership = newMembership;
@@ -463,7 +459,6 @@ var NotificationsController = require("../components/NotificationsController.js"
           NotificationsController.hideActivityIndicator();
         })
         .catch(function(error) {
-          console.log(error);
           ctx.showMoveToCourseModal = false;
           NotificationsController.hideActivityIndicator();
           NotificationsController.showErrorNotification(error);
@@ -521,7 +516,6 @@ var NotificationsController = require("../components/NotificationsController.js"
           NotificationsController.hideActivityIndicator();
         })
         .catch(function(error) {
-          console.log(error);
           NotificationsController.hideActivityIndicator();
           NotificationsController.showErrorNotification(error);
         });
@@ -549,7 +543,6 @@ var NotificationsController = require("../components/NotificationsController.js"
           }
         })
         .then(function(res) {
-          console.log("inside response for get membership");
           ctx.membership = res.data.data;
           ctx.newStatus = ctx.membership.status;
           NotificationsController.hideActivityIndicator();
@@ -580,7 +573,6 @@ var NotificationsController = require("../components/NotificationsController.js"
           });
           ctx.courses = courses;
           ctx.loadingCourse = false
-          console.log(courses);
           NotificationsController.hideActivityIndicator();
         })
         .catch(function(error) {
@@ -596,7 +588,6 @@ var NotificationsController = require("../components/NotificationsController.js"
         const params = new URLSearchParams(window.location.search);
         const lv4TabRaw = params.get('lv4Tab');
         const lv4Tab = lv4TabRaw.substring(0 , lv4TabRaw.indexOf('?')) || null;
-        console.log("lv4Tab = " , lv4Tab);
         if (lv4Tab === 'membership') {
           var id = lv4TabRaw.substring(lv4TabRaw.indexOf("=") + 1 , lv4TabRaw.length)
           this.id = id;

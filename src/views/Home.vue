@@ -369,12 +369,10 @@ export default {
                 this.$router.push('home?lv1Tab=user&lv2Tab=detail?id=' + id);
             },
             showVideoPreview(data) {
-                console.log("insdei showVideoPreview in home ");
-                console.log(data);
+
             },
             showBundleDetail(id) {
-                console.log("inside showBundleDetail in home");
-                console.log(id);
+
                 this.bundleId = id;
                 this.lvOneIndex = 4;
                 this.lvTwoIndex = 1;
@@ -414,11 +412,7 @@ export default {
 
 
         axios.defaults.headers.common['Authorization'] = token;
-        console.log();
-        console.log("HEADERS IN HOME");
-        console.log(axios.defaults.headers);
-        console.log();
-        console.log();
+
 
         this.$el.addEventListener('itemSelected', e => console.log("got it in home"));
         this.current = this.pages[0];

@@ -303,7 +303,7 @@
   text-align: center;
 }
 
-table{
+/* table{
   box-shadow: 0px 0px 10px 0px #BDBDBD;
 }
 
@@ -313,9 +313,7 @@ table{
 }
 
 .head{
-
   height: 60px;
-
 }
 
 .column{
@@ -351,7 +349,7 @@ table{
   font-size: 14px;
   border: 1px solid #37474f;
 
-}
+} */
 
 
 .btActionCentered{
@@ -600,15 +598,7 @@ table{
 border-width: 2px;
 }
 
-/* .addBtn {
-    background: red;
-    border-radius: 100px;
-} */
 
-/* thead{
-   position: sticky;
-    top: 0px;
-} */
 .usersCont{
   text-align: left;
   padding: 10px;
@@ -930,5 +920,49 @@ position: relative;
   justify-content: center;
   align-items: center;
 }
+
+table{
+	height: 100%;
+	width : 100%;
+	background: #BDBDBD;
+	border-radius: 10px;
+	overflow: auto;
+	transition: all 0.25s;
+}
+
+thead th {
+  position: sticky;
+  top: -20px;
+	background: #BDBDBD;
+}
+
+thead{
+	color: #031b4e;
+	font-size: 14px;
+	position: sticky;
+	top: 0;
+	background: #BDBDBD;
+
+}
+th{
+	height: 50px;
+	font-family: Medium
+}
+
+tbody{
+  font-size: 13px;
+}
+
+table tr:nth-child(odd) td{
+    background: #E0E0E0;
+		height: 50px;
+    padding: 0px 4px 0px 4px !important;
+}
+table tr:nth-child(even) td{
+    background: #EEEEEE;
+		height: 50px;
+    padding: 0px 4px 0px 4px !important;
+}
+
 
 </style>

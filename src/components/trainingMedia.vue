@@ -259,6 +259,7 @@ var NotificationsController = require("../components/NotificationsController.js"
         selectedFilters : [],
         showFilters: false,
         stages : [
+          'temporary-freeze',
           'pre-instructor', // MEANS USER PAIDED AND SIGNED UP
           'pre-instructor-tbc', //USER DID NOT ATTEND TRAINING CLASSES
           'instructor-in-training', // USER ATTENDED THE TRAINING CLASSES

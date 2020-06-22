@@ -1,11 +1,5 @@
 import axios from 'axios';
 
-
-
-
-
-
-
 // const baseURL = 'http://localhost:3001/';
 // const baseURL = 'https://api-staging.mybarrefitness.com/';
 const baseURL = 'https://api.mybarrefitness.com/';
@@ -39,7 +33,8 @@ export const URLS = {
   },
   USER: {
     LIST_ALL: 'user/list/all',
-    BY_ID: 'user/profile/:id'
+    BY_ID: 'user/profile/:id',
+    UPDATE_PROFILE: 'user/update/:id'
   },
   BUNDLE: {
     BY_ID: 'bundle/:id',

@@ -107,7 +107,7 @@ CE Store<template lang="html">
               <div class="titleContOuter">
                 <div class="titleCont" style="border-left: 4px solid #3366CC;">
                   <label class="name" style="color : #3366CC">TOTAL REVENUE : <span class="totalRevenue">
-                    ¥{{getTotalRevenue(revenue)}}</span></label>
+                    ¥{{revenue}}</span></label>
                   <label class="value" >ACCUMLATED REVENUE FROM TRAINGINGS , STORE and BUNDLES</label>
 
 
@@ -117,11 +117,11 @@ CE Store<template lang="html">
 
               <pie-chart
               :data="[
-              ['Store' , revenue.store],
-              ['Store Shipping' , revenue.shippingRevenue],
-              ['Trainings', revenue.membership] ,
-              ['License' , revenue.license],
-              ['CE Store', revenue.bundles] ]"></pie-chart>
+              ['Store' , revenueObj.store],
+              ['Store Shipping' , revenueObj.shippingRevenue],
+              ['Trainings', revenueObj.membership] ,
+              ['License' , revenueObj.license],
+              ['CE Store', revenueObj.bundles] ]"></pie-chart>
 
             </div>
           </div>
@@ -186,7 +186,8 @@ import ApexCharts from 'apexcharts'
 	    return {
         users : {},
         graphs : {},
-        revenue: {store : 0 , membership : 0 , bundles : 0},
+        revenueObj : {store : 0 , membership : 0 , bundles : 0},
+        revenue: 0.0,
         total : {},
         femaleCount: 0,
         maleCount: 0,
@@ -197,11 +198,6 @@ import ApexCharts from 'apexcharts'
 	    };
 	  },
     methods:{
-      getTotalRevenue(revenue){
-        var total = parseFloat(revenue.store || 0.0)+ parseFloat(revenue.shippingRevenue || 0.0) + parseFloat(revenue.memberships || 0.0) + parseFloat(revenue.license || 0.0) + parseFloat(revenue.bundles || 0.0);
-        total = parseFloat(total).toFixed(2);
-        return total;
-      },
 			getUsers(){
 				NotificationsController.showActivityIndicator();
 				const ctx = this;
@@ -257,7 +253,11 @@ import ApexCharts from 'apexcharts'
 						}
 					})
 						.then(function(res) {
-              ctx.revenue = res.data.data;
+              ctx.revenueObj = res.data.data;
+              const revenue = res.data.data;
+              var total = parseFloat(revenue.store) + parseFloat(revenue.membership) + parseFloat(revenue.shippingRevenue) +  parseFloat(revenue.license) + parseFloat(revenue.bundles);
+              total = total.toFixed(2);
+              ctx.revenue = total;
 							NotificationsController.hideActivityIndicator();
 						})
 						.catch(function(error) {

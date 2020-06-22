@@ -18,8 +18,6 @@ export function showNotification(type, msg) {
 
 
 export function showErrorNotification(error) {
-	console.log(error);
-
 	document.getElementById('notificationBar').style.background = "#ffb74d";
 	var msg = error;
 	let response = error.response;
