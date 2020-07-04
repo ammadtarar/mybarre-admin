@@ -22,14 +22,15 @@
     <table v-if="courses.length >= 1">
     <thead>
       <tr >
-        <th  style="width : 2">ID</th>
-        <th  style="width : 10">NAME</th>
+        <th  style="width : 5">ID</th>
+        <th  style="width : 15">NAME</th>
         <th  style="width : 15%">TIME</th>
-        <th  style="width : 14%">LAST SIGN UP DATE</th>
-        <th  style="width : 15%">VENUE</th>
-        <th  style="width : 8%">PRICE</th>
-        <th  style="width : 8%">LICENSE FEE</th>
-        <th  style="width : 18%">ACTIONS</th>
+        <th  style="width : 10%">LAST SIGN UP DATE</th>
+        <th  style="width : 20%">VENUE</th>
+        <th  style="width : 6%">PRICE</th>
+        <th  style="width : 7%">LICENSE FEE</th>
+        <th  style="width : 7%">SIGNUP COUNT</th>
+        <th  style="width : 15%">ACTIONS</th>
       </tr>
     </thead>
     <tbody>
@@ -41,6 +42,7 @@
         <td >{{course.venue || 'N/A'}}</td>
         <td >{{course.price || 'N/A'}}</td>
         <td >{{course.license_fee || 'N/A'}}</td>
+        <td >{{course.memberships.length || "0"}}</td>
         <td style="text-align : center">
 
 

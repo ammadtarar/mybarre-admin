@@ -11,7 +11,7 @@
       <courses v-if="index ===1" @showCourseDetail="showCourseDetail" @hideCourseDetail="index = 1"/>
       <trainingMedia v-if="index === 2" />
       <courseDetail v-if="index === 3" :courseId="courseId" @onMembershipClick="onMembershipClick" @hideCourseDetail="hideCourseDetail"/>
-      <membershipDetail v-if="index === 4" :membershipId="membershipId" @hideMembershipDetails="hideMembershipDetails"/>
+      <membershipDetail v-if="index === 4" :membershipId="membershipId" @hideMembershipDetails="hideMembershipDetails" @showUserDetail="showUserDetail"/>
     </div>
 
 
@@ -46,6 +46,10 @@ import MembershipDetail from "./membershipDetail.vue";
       hideMembershipDetails(){
         this.showCourseDetail(this.courseId)
         console.log("hideMembershipDetails");
+      },
+      showUserDetail(id){
+        console.log("showUserDetail in training = " , id);
+        this.$emit('showUserDetail' , id)
       },
       hideCourseDetail(){
         this.index = 1

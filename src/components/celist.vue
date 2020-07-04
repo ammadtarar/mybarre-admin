@@ -145,6 +145,8 @@ import Modal from "../components/modal.vue";
 import Pager from "../components/pager.vue";
 import FilesUploadModal from "../components/filesUploadModal.vue";
 var NotificationsController = require("../components/NotificationsController.js");
+var OSS = require('ali-oss');
+
   export default {
 		name: 'celist',
 	  components: {
@@ -174,31 +176,32 @@ var NotificationsController = require("../components/NotificationsController.js"
 	    };
 	  },
 		methods:{
-			uploadFile(){
+			async uploadFile(){
 				if (this.imgFile === null) {
 					return;
 				}
 				const ctx = this;
 				NotificationsController.showActivityIndicator();
-				var formData = new FormData();
-				formData.append("file", this.imgFile);
-				var url = URLS.FILE.UPLOAD;
-        url = url + "?type=others";
-				var axios = HTTP.post(url, formData, {
-					headers: {
-						Authorization: localStorage.getItem("token")
-					}
-				})
-				.then(function(response){
-					console.log(response);
-					ctx.saveBundle(response.data.url)
+
+
+
+				  let client = new OSS({
+          region: 'oss-accelerate',
+          accessKeyId: 'LTAI4GFTLJTB2U4J9mXzWP9n',
+          accessKeySecret: 'yq6W4oN6pG5mxq07M23kwjeBAaoaRj',
+          bucket: 'mybarre'
+        });
+
+				
+
+
+				let r1 = await client.put('thumb' + String(new Date().getMilliseconds()),this.imgFile); 
+				var url = r1.url;
+				ctx.saveBundle(url)
 					NotificationsController.hideActivityIndicator();
-				})
-				.catch(function(err){
-					NotificationsController.hideActivityIndicator();
-					console.log(err);
-					NotificationsController.showErrorNotification(err);
-				})
+
+
+
 			},
 			displayDeleteModal(bundle){
 				this.deletableBundleObject = bundle;

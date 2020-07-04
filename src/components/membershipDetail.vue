@@ -12,6 +12,14 @@
 			<expandBtn title="Student Information" @onToggle="expandUserInfo = $event"/>
 
 			<div class="actions_cont">
+
+        
+
+        <div class="btAction btActionCentered green" @click="$emit('showUserDetail' , membership.user.id)">
+          USER DETAILS
+				</div>
+
+
 				<div class="btAction btActionCentered orange" @click="displayExtendModal">
           EXTEND VIDEO SUBMISSION DATE
 				</div>
@@ -38,22 +46,39 @@
 
 		</div>
 
+    <div v-if="expandUserInfo && membership && membership.user" class="cont">
 
-		<div v-if="expandUserInfo && membership" class="cont">
-
-      <div class="half-half" >
-        <div class="keyValCont">
-          <label class="key">First Name / Family Name / Nickname</label>
-          <label class="val">{{membership.user.first_name || 'N/A'}} / {{membership.user.last_name || 'N/A'}} / {{membership.user.nickname || 'N/A'}}</label>
-        </div>
-        <div class="keyValCont">
-          <label class="key">Birthday</label>
-          <label class="val">{{membership.user.dob || 'N/A'}}</label>
+      <div  >
+        <div class="tripleKeyValCont">
+          <label class="key">Headshot</label>
+          <img  :src="membership.user.avatar_url"  class="dp" >
         </div>
       </div>
 
 
       <div class="half-half" >
+        <div class="keyValCont">
+          <label class="key">First name</label>
+          <label class="val">{{membership.user.first_name || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Family name</label>
+          <label class="val">{{membership.user.last_name || '--'}}</label>
+        </div>
+      </div>
+
+      <div class="half-half" >
+        <div class="keyValCont">
+          <label class="key">Nickname</label>
+          <label class="val">{{membership.user.nickname || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Name on Certificate</label>
+          <label class="val">{{membership.user.certificate_name || 'N/A'}}</label>
+        </div>
+      </div>
+
+      <div class="half-half">
         <div class="keyValCont">
           <label class="key">Email</label>
           <label class="val">{{membership.user.email || 'N/A'}}</label>
@@ -64,7 +89,78 @@
         </div>
       </div>
 
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Gender</label>
+          <label class="val">{{membership.user.gender ? membership.user.gender.toUpperCase() : 'N/A' || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Date of Birth</label>
+          <label class="val">{{membership.user.dob || 'N/A'}}</label>
+        </div>
+      </div>
+
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">City</label>
+          <label class="val">{{membership.user.city || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Address</label>
+          <label class="val">{{membership.user.address || 'N/A'}}</label>
+        </div>
+      </div>
+
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Nationality</label>
+          <label class="val">{{membership.user.nationality || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Wechat ID/Username</label>
+          <label class="val">{{membership.user.wechat_id || 'N/A'}}</label>
+        </div>
+      </div>
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Ocuupation</label>
+          <label class="val">{{membership.user.occupation || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">User ID</label>
+          <label class="val">{{membership.user.id || 'N/A'}}</label>
+        </div>
+      </div>
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Training Top Size</label>
+          <label class="val">{{membership.user.top_size || 'N/A'}}</label>
+        </div>
+        <div class="keyValCont">
+          <label class="key">Training Socks Size</label>
+          <label class="val">{{membership.user.sock_size || 'N/A'}}</label>
+        </div>
+      </div>
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Preffered Manual Language</label>
+          <label class="val">{{membership.user.manual_lang.toUpperCase() || 'N/A'}}</label>
+        </div>
+      </div>
+
     </div>
+
+
+
+
+
+    
 
 
 <expandBtn title="Membership Information" @onToggle="expandMembershipInfo = $event" style="margin-top : 20px"/>
@@ -89,7 +185,7 @@
         </div>
         <div class="keyValCont">
           <label class="key">Status / Stage</label>
-          <label class="val" style="text-transform: capitalize;">{{membership.status.replace('-' , ' ') || 'N/A'}}</label>
+          <label class="val" style="text-transform: capitalize;">{{membership ? membership.status.replace('-' , ' ') : ''|| 'N/A'}}</label>
         </div>
       </div>
 
@@ -302,6 +398,7 @@ import {
 }
 from '../network/http';
 var NotificationsController = require("../components/NotificationsController.js");
+var OSS = require('ali-oss');
 
   export default {
 		name : 'user',
@@ -367,23 +464,25 @@ var NotificationsController = require("../components/NotificationsController.js"
           url : this.membership.certificate_url
         });
       },
-      uploadNewLicense(){
+      async uploadNewLicense(){
         const ctx = this;
         NotificationsController.showActivityIndicator();
-        var formData = new FormData();
-        formData.append("file", this.imgFile);
-        var url = URLS.FILE.UPLOAD;
-        url = url + "?type=certificates";
-        var axios = HTTP.post(url, formData, {
-          headers: {
-            Authorization: localStorage.getItem("token")
-          }
-        })
-        .then(function(response){
-          var url = response.data.url;
-          NotificationsController.hideActivityIndicator();
 
-          HTTP.post(URLS.MEMBERSHIP.UPDATE_CERTIFICATE_URL.replace(':id' , ctx.membershipId) , {certificate_url : url} , {
+
+        let client = new OSS({
+          region: 'oss-accelerate',
+          accessKeyId: 'LTAI4GFTLJTB2U4J9mXzWP9n',
+          accessKeySecret: 'yq6W4oN6pG5mxq07M23kwjeBAaoaRj',
+          bucket: 'mybarre'
+        });
+
+				
+
+
+				let r1 = await client.put('certificate_membership_' + String(ctx.membershipId) + "_stamp_" + String(new Date().getMilliseconds()),this.imgFile); 
+				var url = r1.url;
+
+        HTTP.post(URLS.MEMBERSHIP.UPDATE_CERTIFICATE_URL.replace(':id' , ctx.membershipId) , {certificate_url : url} , {
   					headers: {
   						Authorization: localStorage.getItem("token")
   					}
@@ -402,12 +501,6 @@ var NotificationsController = require("../components/NotificationsController.js"
   						});
 
 
-
-        })
-        .catch(function(err){
-          NotificationsController.hideActivityIndicator();
-          NotificationsController.showErrorNotification(err);
-        })
       },
       onFileChange(e) {
 				const file = e.target.files[0];

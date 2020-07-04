@@ -262,6 +262,14 @@
         </div>
       </div>
 
+
+      <div class="half-half">
+        <div class="keyValCont">
+          <label class="key">Preffered Manual Language</label>
+          <label class="val">{{user.user.manual_lang.toUpperCase() || 'N/A'}}</label>
+        </div>
+      </div>
+
     </div>
 
 
@@ -591,6 +599,7 @@ import {
 }
 from '../network/http';
 var NotificationsController = require("../components/NotificationsController.js");
+var OSS = require('ali-oss');
 
   export default {
 		name : 'user',
@@ -694,25 +703,26 @@ var NotificationsController = require("../components/NotificationsController.js"
         this.membershipId = item.id ;
         this.index = 2;
       },
-      uploadNewLicense(){
+      async uploadNewLicense(){
         const ctx = this;
         NotificationsController.showActivityIndicator();
-        var formData = new FormData();
-        formData.append("file", this.imgFile);
-        var url = URLS.FILE.UPLOAD;
-        url = url + "?type=certificates";
-        var axios = HTTP.post(url, formData, {
-          headers: {
-            Authorization: localStorage.getItem("token")
-          }
-        })
-        .then(function(response){
-          console.log(response);
-          var url = response.data.url;
-          console.log("URL = " , url);
-          NotificationsController.hideActivityIndicator();
 
-          HTTP.post(URLS.MEMBERSHIP.UPDATE_CERTIFICATE_URL.replace(':id' , ctx.membership.id) , {certificate_url : url} , {
+
+        	  let client = new OSS({
+          region: 'oss-accelerate',
+          accessKeyId: 'LTAI4GFTLJTB2U4J9mXzWP9n',
+          accessKeySecret: 'yq6W4oN6pG5mxq07M23kwjeBAaoaRj',
+          bucket: 'mybarre'
+        });
+
+				
+
+
+				let r1 = await client.put('license_membership_' + String(ctx.membership.id) + "_stamp_" + String(new Date().getMilliseconds()),this.imgFile); 
+				var url = r1.url;
+
+
+              HTTP.post(URLS.MEMBERSHIP.UPDATE_CERTIFICATE_URL.replace(':id' , ctx.membership.id) , {certificate_url : url} , {
   					headers: {
   						Authorization: localStorage.getItem("token")
   					}
@@ -732,12 +742,7 @@ var NotificationsController = require("../components/NotificationsController.js"
 
 
 
-        })
-        .catch(function(err){
-          NotificationsController.hideActivityIndicator();
-          console.log(err);
-          NotificationsController.showErrorNotification(err);
-        })
+
       },
       onFileChange(e) {
 				const file = e.target.files[0];

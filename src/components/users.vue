@@ -28,15 +28,15 @@
 		        <tr >
 							<th  style="width : 5%">#</th>
 							<th  style="width : 10%">DATE </br>(Start / Expiry)</th>
-		          			<th  style="width : 15%">NAME (First/Family/Nick)</th>
-		          			<th  style="width : 8%">EMAIL</th>
-		          			<th  style="width : 8%">PHONE</th>
+		          <th  style="width : 12%">NAME (First/Family/Nick)</th>
+		          <th  style="width : 8%">EMAIL</th>
+		          <th  style="width : 8%">PHONE</th>
 							<th  style="width : 8%">WECHAT ID</th>
 							<th  style="width : 7%">GENDER</th>
-							<th  style="width : 20%">COURSE</th>
+							<th  style="width : 15%">COURSE</th>
 							<th  style="width : 12%">STATUS</th>
 							<!-- <th  style="width : 10%">EXPIRY</th> -->
-							<th  style="width : 7%">ACTIONS</th>
+							<th  style="width : 15%">ACTIONS</th>
 		        </tr>
 		      </thead>
 		      <tbody>
@@ -58,6 +58,12 @@
 									@click="$emit('showUserDetail' , user.id)"
 										class="btAction green"
 									>DETAILS</button>
+
+                  <button
+									@click="onClickUpdateMembership(user.memberships[0])"
+										class="btAction green"
+									>UPDATE STATUS</button>
+
 								</a>
 							</td>
 		        </tr>
@@ -120,6 +126,36 @@
 					</div>
 			</modal>
 
+
+       <modal v-if="showUpdateStatusModal"  @close="showUpdateStatusModal = false" size="size">
+        <h3 slot="header" style="text-align : left;">Update Status</h3>
+        <div slot="body" class="modalBody">
+          <label style="color : #37474f">You can update exam training status i.e., Pass or Fail</label>
+
+
+          <label class="inputTitle spacing30">Current Status</label>
+          <label style="color : #37474f; text-transform: capitalize;">{{membership.status.replace('-' , ' ')}}</label>
+
+          <label class="inputTitle spacing30">New Status</label>
+          <select v-model="newStatus" >
+            <option disabled value="null">Select one status</option>
+              <option
+              v-for="item in statuses"
+                v-bind:value="item"
+                v-bind:key="item">
+                <span style="text-transform: capitalize;">{{item.replace("-" , " ").replace("-" , " ").toUpperCase()}}</span>
+
+              </option>
+          </select>
+        </div>
+        <div class="buttonsWrapper" slot="footer">
+          <div class="bottonsContainer" >
+            <button type="button" class="bt neg" @click="showUpdateStatusModal = false">Clear</button>
+            <button type="button" class="bt pos" @click="updateMembershipStatus">Update</button>
+          </div>
+        </div>
+    </modal>
+
     </div>
 </template>
 
@@ -166,10 +202,52 @@ export default {
         "exam-failed", // SUBMITTED TRAINING VIDEOS FAILED
         "license-fee-paid", // USER PASSED THE EXAM AND PAID THE LICENSE FEE
         "licensed-instructor" // USER PASSED THE EXAM AND PAID THE LICENSE FEE
-      ]
+      ],
+      showUpdateStatusModal: false,
+     membership : null,
+      newStatus : '',
+      
     };
   },
   methods: {
+   onClickUpdateMembership(membership){
+     if(membership === null || membership === undefined){
+       NotificationsController.showNotification('warning' , 'Membership not found. Please try again later');
+       return;
+     }
+      this.membership = membership;
+      this.newStatus = this.membership.status; 
+      console.log(this.membership);
+      
+      this.showUpdateStatusModal = true
+    },
+    updateMembershipStatus(){
+        if (this.newStatus === this.membership.status) {
+          NotificationsController.showNotification('warning' , 'Please select a new status');
+          return;
+        }
+        const ctx = this;
+        var mUrl = URLS.MEMBERSHIP.UPDATE_STATUS.replace(':id' , this.membership.id);
+        mUrl = mUrl.replace(':status' , this.newStatus);
+        HTTP.post(mUrl, {} , {
+          headers: {
+            Authorization: localStorage.getItem("token")
+          }
+        })
+        .then(function(res) {
+          ctx.getUsers()
+          ctx.showUpdateStatusModal = false;
+          ctx.membership = null;
+          NotificationsController.showNotification('success' , 'Membership status updated');
+          NotificationsController.hideActivityIndicator();
+        })
+        .catch(function(error) {
+          ctx.showUpdateStatusModal = false;
+          NotificationsController.hideActivityIndicator();
+          NotificationsController.showErrorNotification(error);
+        });
+
+      }, 
 	getIndex(index){
 
 		if(this.page === 1) {

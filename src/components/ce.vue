@@ -273,6 +273,7 @@ import {
 }
 from '../network/http';
 var NotificationsController = require("../components/NotificationsController.js");
+var OSS = require('ali-oss');
 
   export default {
 		name : 'ce',
@@ -348,31 +349,32 @@ var NotificationsController = require("../components/NotificationsController.js"
         this.thumbUrl = URL.createObjectURL(file);
         this.thumbImg = file;
       },
-      uploadThumb(){
+      async uploadThumb(){
 				if (this.thumbImg === null) {
 					return;
 				}
 				const ctx = this;
-				NotificationsController.showActivityIndicator();
-				var formData = new FormData();
-				formData.append("file", this.thumbImg);
-				var url = URLS.FILE.UPLOAD;
-        url = url + "?type=thumbnail";
-				var axios = HTTP.post(url, formData, {
-					headers: {
-						Authorization: localStorage.getItem("token")
-					}
-				})
-				.then(function(response){
-          const imgUrl = response.data.url;
+        NotificationsController.showActivityIndicator();
+        
+          let client = new OSS({
+          region: 'oss-accelerate',
+          accessKeyId: 'LTAI4GFTLJTB2U4J9mXzWP9n',
+          accessKeySecret: 'yq6W4oN6pG5mxq07M23kwjeBAaoaRj',
+          bucket: 'mybarre'
+        });
 
-          HTTP.patch(URLS.FILE.BY_ID.replace(':id' , ctx.thumbObject.id) , {thumb_url : imgUrl} , {
+				
+
+
+				let r1 = await client.put('thumb' + String(new Date().getMilliseconds()),this.thumbImg); 
+				var url = r1.url;
+            HTTP.patch(URLS.FILE.BY_ID.replace(':id' , ctx.thumbObject.id) , {thumb_url : url} , {
               headers: {
                 Authorization: localStorage.getItem("token")
               },
             })
-              .then(function(res) {
-                  ctx.showThumbModal = false;
+            .then(function(res) {
+                    ctx.showThumbModal = false;
                   ctx.thumbObject = null;
                   ctx.thumbUrl = null;
                   ctx.thumbImg = null;
@@ -380,13 +382,12 @@ var NotificationsController = require("../components/NotificationsController.js"
                   NotificationsController.hideActivityIndicator();
                   NotificationsController.showNotification('success' , 'Video thumbnail uploaded');
               })
+              .catch(function(err){
+                NotificationsController.hideActivityIndicator();
+                console.log(err);
+                NotificationsController.showErrorNotification(err);
+              })
 
-				})
-				.catch(function(err){
-					NotificationsController.hideActivityIndicator();
-					console.log(err);
-					NotificationsController.showErrorNotification(err);
-				})
 			},
       displayEditThumbModal(item){
         this.thumbObject = item;
@@ -400,31 +401,32 @@ var NotificationsController = require("../components/NotificationsController.js"
       goBack(){
         this.$emit('hideBundleDetail')
       },
-      uploadFile(){
+      async uploadFile(){
 				if (this.imgFile === null) {
 					return;
 				}
 				const ctx = this;
-				NotificationsController.showActivityIndicator();
-				var formData = new FormData();
-				formData.append("file", this.imgFile);
-        var url = URLS.FILE.UPLOAD;
-        url = url + "?type=others";
-				var axios = HTTP.post(url, formData, {
-					headers: {
-						Authorization: localStorage.getItem("token")
-					}
-				})
-				.then(function(response){
-					console.log(response);
-					ctx.updateBundle(response.data.url)
+        NotificationsController.showActivityIndicator();
+        
+
+        let client = new OSS({
+          region: 'oss-accelerate',
+          accessKeyId: 'LTAI4GFTLJTB2U4J9mXzWP9n',
+          accessKeySecret: 'yq6W4oN6pG5mxq07M23kwjeBAaoaRj',
+          bucket: 'mybarre'
+        });
+
+				
+
+
+				let r1 = await client.put('others' + String(new Date().getMilliseconds()),this.imgFile); 
+        var url = r1.url;
+        
+        ctx.updateBundle(url)
 					NotificationsController.hideActivityIndicator();
-				})
-				.catch(function(err){
-					NotificationsController.hideActivityIndicator();
-					console.log(err);
-					NotificationsController.showErrorNotification(err);
-				})
+
+
+			
 			},
       updateBundle(newCoverUrl){
 

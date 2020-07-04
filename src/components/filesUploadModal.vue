@@ -108,6 +108,7 @@ import {
 from '../network/http';
 import Modal from './modal.vue'
 var NotificationsController = require("../components/NotificationsController.js");
+var OSS = require('ali-oss');
 
 export default {
 	name: 'filesUploadModal',
@@ -181,20 +182,27 @@ export default {
 			this.close();
 
 		},
-		onClickPositiveButton(){
-
-
+		async onClickPositiveButton(){
 			var ctx = this;
 			NotificationsController.showActivityIndicator();
 			var promises = [];
-			this.files.forEach(function(file){
-				var formData = new FormData();
 
-				formData.append("file", file);
-				var url = URLS.FILE.UPLOAD;
-				url = url + "?type=bundle";
-				url = url + "&item_name="+file.title;
-				url = url + "&bundle_id="+ctx.bundleId;
+			let client = new OSS({
+				region: 'oss-accelerate',
+				accessKeyId: 'LTAI4GFTLJTB2U4J9mXzWP9n',
+				accessKeySecret: 'yq6W4oN6pG5mxq07M23kwjeBAaoaRj',
+				bucket: 'mybarre'
+			});
+
+			for (let index = 0; index < ctx.files.length; index++) {
+				console.log("index = " , index);
+				
+				var file = ctx.files[index];
+				console.log(file);
+				let r1 = await client.put(file.title,file); 
+				var url = r1.url;
+				console.log("url = " , url);
+				
 
 				if (ctx.needStage) {
 					var stages = [];
@@ -203,19 +211,26 @@ export default {
 							stages.push(item.stage)
 						}
 					});
-					url = url + "&stages="+JSON.stringify(stages);
+					stages = JSON.stringify(stages);
 				}else{
-					url = url + "&stages="+JSON.stringify([]);
+					stages = JSON.stringify([]);
 				}
 
-				var axios = HTTP.post(url ,formData, {
+				var axios = HTTP.post(URLS.FILE.CREATE ,{
+					type : 'bundle',
+					item_name : file.title,
+					bundle_id : ctx.bundleId,
+					stages : stages,
+					thumb_url : file.type.includes("vid") ? url+'?x-oss-process=video/snapshot,t_50000,f_jpg,w_800,h_600' : '',
+					url : url,
+					mime : file.type
+				}, {
 					headers: {
 						Authorization: localStorage.getItem("token")
 					}
 				});
-				promises.push(axios);
-			})
-
+				promises.push(axios);				
+			}
 			Promise.all(promises).then(function(values) {
 				console.log(values);
 				NotificationsController.hideActivityIndicator();
