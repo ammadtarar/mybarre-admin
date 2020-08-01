@@ -18,7 +18,7 @@
 }
 
 .navBar {
-    width: calc(100% - 40px);
+    width: calc(100vw - 40px);
     height: 50px;
     padding: 20px;
     display: flex;
@@ -28,6 +28,8 @@
     z-index: 2;
     box-shadow: 0px 0px 10px 0px #1b2a3f;
     background: #fce4ec;
+    overflow-x: scroll;
+
 }
 
 .icon {

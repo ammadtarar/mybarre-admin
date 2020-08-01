@@ -72,11 +72,17 @@
       </div>
     </transition>
 
+
+
+    <userStatusUpdateModal v-if="showUserStatusUpdateModal" :userObject="updateableUser"/>
   </div>
 </template>
 
 
 <script>
+
+import userStatusUpdateModal from './components/userStatusUpdateModal';
+
   export default {
 	name: 'MainApp',
   data() {
@@ -84,9 +90,14 @@
       showingVideo: false,
       videoModel: null,
       videoModel:{url : '' , thumb_url : ''},
+      showUserStatusUpdateModal : false,
+      updateableUser : null
     };
   },
-   methods : {
+  components: {
+    userStatusUpdateModal : userStatusUpdateModal
+  },
+  methods : {
      closeVideo(){
        document.getElementById('videoView').style.display = 'none';
        this.videoModel = {url : '' , thumb_url : ''};
@@ -112,10 +123,27 @@
 
       this.$root.$on('showImage', function(data) {
         document.getElementById("imgInner").innerHTML = '<img id="u23_img" class="videoView" src="'+ data.url+ '">';
-        console.log(document.getElementById("imgInner").innerHTML);
         document.getElementById('imageView').style.display = 'table';
       });
 
+      this.$root.$on('displayUserUpdateModalInRoot', function(data) {
+        ctx.updateableUser = data;
+        ctx.showUserStatusUpdateModal = true;
+      });
+
+      this.$root.$on('closeUserUpdateModal' , function(data){
+        ctx.updateableUser = null;
+        ctx.showUserStatusUpdateModal = false;
+      });
+
+      this.$root.$on('onUserStatusUpdatedSuccessfully' , function(data){
+        ctx.updateableUser = null;
+        ctx.showUserStatusUpdateModal = false;
+        console.log("onUserStatusUpdatedSuccessfully in App.vue");
+      });
+
+
+      
 
     }
   }

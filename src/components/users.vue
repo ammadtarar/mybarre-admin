@@ -13,7 +13,7 @@
 							Search
 						</a>
 
-						<a class="bt_container" v-if="keyword !== '' || userStatus !== 'null' || userGender !== 'null' || userWxId !== 'null'" @click="clearSearch">
+						<a class="bt_container" v-if="keyword !== '' || userStatus !== 'null' || userGender !== 'null' || userWxId !== 'null' || userType !== 'null' || userApprovalStatus !== 'null'" @click="clearSearch">
 							Clear Search
 						</a>
 					</div>
@@ -27,14 +27,16 @@
 		      <thead>
 		        <tr >
 							<th  style="width : 5%">#</th>
-							<th  style="width : 10%">DATE </br>(Start / Expiry)</th>
-		          <th  style="width : 12%">NAME (First/Family/Nick)</th>
+							<th  style="width : 8%">DATE </br>(Start / Expiry)</th>
+		          <th  style="width : 10%">NAME (First/Family/Nick)</th>
 		          <th  style="width : 8%">EMAIL</th>
 		          <th  style="width : 8%">PHONE</th>
 							<th  style="width : 8%">WECHAT ID</th>
 							<th  style="width : 7%">GENDER</th>
-							<th  style="width : 15%">COURSE</th>
-							<th  style="width : 12%">STATUS</th>
+							<th  style="width : 10%">COURSE</th>
+							<th  style="width : 10%">TRAINING STATUS</th>
+              <th  style="width : 5%">TYPE</th>
+              <th  style="width : 6%">STATUS</th>
 							<!-- <th  style="width : 10%">EXPIRY</th> -->
 							<th  style="width : 15%">ACTIONS</th>
 		        </tr>
@@ -51,6 +53,8 @@
 		          			<td >{{user.gender ? user.gender.toUpperCase() : 'N/A' || 'N/A'}}</td>
 							<td ><span style="white-space: pre-wrap;">{{getCourse(user)}}</span></td>
 							<td >{{getMembershipStatus(user)}}</td>
+              <td >{{user.type.toUpperCase()}}</td>
+              <td >{{user.status.toUpperCase()}}</td>
 							<!-- <td>{{getExpiry(user)}}</td> -->
 							<td>
 								<a >
@@ -59,10 +63,16 @@
 										class="btAction green"
 									>DETAILS</button>
 
+                  <button 
+                  @click="displayUserUpdateModal(user)"
+                  class="btAction orange"
+                  v-if="user.type == 'legacy'"
+                  >Update User Status</button>
+
                   <button
 									@click="onClickUpdateMembership(user.memberships[0])"
 										class="btAction green"
-									>UPDATE STATUS</button>
+									>UPDATE TRAINING STATUS</button>
 
 								</a>
 							</td>
@@ -106,10 +116,33 @@
 								</option>
 						</select>
 
-
-						<label class="inputTitle spacing30">Status</label>
-						<select v-model="userStatus" >
+            <label class="inputTitle spacing30">User Type</label>
+						<select v-model="userType" >
 							<option disabled value="null">Select one type</option>
+								<option
+								v-for="item in userTypes"
+									v-bind:value="item"
+									v-bind:key="item">
+									{{item.replaceAll("-" , " ").toUpperCase()}}
+								</option>
+						</select>
+
+
+            <label class="inputTitle spacing30">Approval Status</label>
+						<select v-model="userApprovalStatus" >
+							<option disabled value="null">Select one status</option>
+								<option
+								v-for="item in userApprovalStatuses"
+									v-bind:value="item"
+									v-bind:key="item">
+									{{item.replaceAll("-" , " ").toUpperCase()}}
+								</option>
+						</select>
+
+
+						<label class="inputTitle spacing30">Training Status</label>
+						<select v-model="userStatus" >
+							<option disabled value="null">Select one status</option>
 								<option
 								v-for="item in statuses"
 									v-bind:value="item"
@@ -183,6 +216,8 @@ export default {
       keyword: "",
       userStatus: "null",
       userGender: "null",
+      userType: "null",
+      userApprovalStatus: "null",
       genders: [
         'male',
         'female'
@@ -203,13 +238,25 @@ export default {
         "license-fee-paid", // USER PASSED THE EXAM AND PAID THE LICENSE FEE
         "licensed-instructor" // USER PASSED THE EXAM AND PAID THE LICENSE FEE
       ],
+      userTypes: [
+        'new',
+        'legacy'
+      ],
+      userApprovalStatuses: [
+        'pending',
+        'approved',
+        'rejected'
+      ],
       showUpdateStatusModal: false,
-     membership : null,
+      membership : null,
       newStatus : '',
       
     };
   },
   methods: {
+   displayUserUpdateModal(user){
+     this.$root.$emit('displayUserUpdateModalInRoot' , user);
+   }, 
    onClickUpdateMembership(membership){
      if(membership === null || membership === undefined){
        NotificationsController.showNotification('warning' , 'Membership not found. Please try again later');
@@ -349,6 +396,8 @@ export default {
       this.userStatus = "null";
       this.userGender = "null";
       this.userWxId = "null";
+      this.userApprovalStatus = "null";
+      this.userType = "null";
       this.getUsers();
       this.showSeachModal = false;
     },
@@ -386,6 +435,25 @@ export default {
       }
 
       if (
+        this.userApprovalStatus !== undefined &&
+        this.userApprovalStatus !== null &&
+        this.userApprovalStatus !== "" &&
+        this.userApprovalStatus !== "null"
+      ) {
+        url = url + "&userStatus=" + this.userApprovalStatus;
+      }
+
+
+      if (
+        this.userType !== undefined &&
+        this.userType !== null &&
+        this.userType !== "" &&
+        this.userType !== "null"
+      ) {
+        url = url + "&type=" + this.userType;
+      }
+
+      if (
         this.userWxId !== undefined &&
         this.userWxId !== null &&
         this.userWxId !== "" &&
@@ -413,7 +481,13 @@ export default {
   },
   mounted() {
     console.log("applicants mounted");
-    this.getUsers();
+    
+    let ctx = this;
+    ctx.getUsers();
+
+    this.$root.$on('onUserStatusUpdatedSuccessfully' , function(data){
+        ctx.getUsers();
+    });
   }
 };
 </script>

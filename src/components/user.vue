@@ -22,6 +22,11 @@
 				</div>
 
 
+        <div class="btAction btActionCentered orange" v-if="user.user.type == 'legacy'"  @click="displayUserUpdateModal">
+          UPDATE USER STATUS
+				</div>
+
+
         <div class="btAction btActionCentered red" v-if="editBasicInfo" @click="editBasicInfo = false; editUser = null">
           CANCEL
 				</div>
@@ -744,6 +749,9 @@ var OSS = require('ali-oss');
 
 
       },
+      displayUserUpdateModal(){
+        this.$root.$emit('displayUserUpdateModalInRoot' , this.user.user);
+      }, 
       onFileChange(e) {
 				const file = e.target.files[0];
       	this.url = URL.createObjectURL(file);
@@ -937,8 +945,14 @@ var OSS = require('ali-oss');
       }
     },
     mounted() {
-      this.getTrainingData();
-      this.getMembership();
+      let ctx = this;
+      ctx.getTrainingData();
+      ctx.getMembership();
+
+      this.$root.$on('onUserStatusUpdatedSuccessfully' , function(data){
+          ctx.getTrainingData();
+          ctx.getMembership();
+      });
     }
   }
 </script>

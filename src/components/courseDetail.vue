@@ -131,15 +131,17 @@
       <table style="margin-top : 10px" v-if="course.memberships.length >= 1">
       <thead>
 		        <tr >
-							<th  style="width : 5%">#</th>
-							<th  style="width : 13%">DATE </br>(Start / Expiry)</th>
-		          <th  style="width : 16%">NAME (First/Family/Nick)</th>
+							<th  style="width : 3%">#</th>
+							<th  style="width : 10%">DATE </br>(Start / Expiry)</th>
+		          <th  style="width : 10%">NAME (First/Family/Nick)</th>
 		          <th  style="width : 8%">EMAIL</th>
 		          <th  style="width : 8%">PHONE</th>
 							<th  style="width : 8%">WECHAT ID</th>
 							<th  style="width : 8%">GENDER</th>
-							<th  style="width : 12%">STATUS</th>
+							<th  style="width : 10%">TRAINING STATUS</th>
               <th  style="width : 12%">OUT TRADE #</th>
+              <th  style="width : 6%">TYPE</th>
+              <th  style="width : 7%">APPROVAL STATUS</th>
 							<th  style="width : 14%">ACTIONS</th>
 		        </tr>
 		      </thead>
@@ -154,6 +156,8 @@
               <td >{{membership.user.gender ? membership.user.gender.toUpperCase() : 'N/A' || 'N/A'}}</td>
               <td>{{membership.status.toUpperCase().replaceAll("-" , " ")}}</td>
               <td>{{membership.out_trade_no || 'N/A'}}</td>
+              <td >{{membership.user.type.toUpperCase() || 'N/A'}}</td>
+              <td >{{membership.user.status.toUpperCase() || 'N/A'}}</td>
 							<td>
 								<a >
 									<button
@@ -161,11 +165,16 @@
 										class="btAction green"
 									>DETAILS</button>
 
+                  <button 
+                  @click="displayUserUpdateModal(membership.user)"
+                  class="btAction orange"
+                  v-if="membership.user.type == 'legacy'"
+                  >Update User Status</button>
 
                   <button
 									@click="onClickUpdateMembership(membership)"
 										class="btAction green"
-									>UPDATE STATUS</button>
+									>UPDATE TRAINING STATUS</button>
 
                   
 								</a>
@@ -353,6 +362,9 @@ export default {
       
       this.showUpdateStatusModal = true
     },
+    displayUserUpdateModal(user){
+     this.$root.$emit('displayUserUpdateModalInRoot' , user);
+    }, 
     updateMembershipStatus(){
         if (this.newStatus === this.membership.status) {
           NotificationsController.showNotification('warning' , 'Please select a new status');
@@ -607,7 +619,12 @@ export default {
     }
     console.log("MOUNTED");
     
-    this.getCourse();
+    let ctx = this;
+    ctx.getCourse();
+
+    this.$root.$on('onUserStatusUpdatedSuccessfully' , function(data){
+        ctx.getCourse();
+    });
   }
 };
 </script>

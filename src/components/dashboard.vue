@@ -38,6 +38,10 @@ CE Store<template lang="html">
                 <label class="v">{{total.products}}</label>
               </div>
               <div class="kvv">
+                <label class="k">LICENSE RENEWALS</label>
+                <label class="v">{{total.license_renewals}}</label>
+              </div>
+              <div class="kvv">
                 <label class="k">ORDERS</label>
                 <label class="v">{{total.orders}}</label>
               </div>
@@ -72,8 +76,8 @@ CE Store<template lang="html">
               <pie-chart
                :colors= "['#00897B', '#FF1744']"
               :data="[
-              ['Available (GB)' , disk.free],
-              ['Used (GB)' , disk.total - disk.free]]"></pie-chart>
+              ['Available ( ' + String(disk.free) + ' GB )' , disk.free],
+              ['Used ( ' + String(disk.total - disk.free) + ' GB )' , disk.total - disk.free]]"></pie-chart>
 
             </div>
           </div>
@@ -94,8 +98,8 @@ CE Store<template lang="html">
               <pie-chart
               :colors= "['#42A5F5', '#E91E63']"
               :data="[
-              ['Male' , maleCount],
-              ['Female' , femaleCount] ]"></pie-chart>
+              ['Male ( ' + String(maleCount) + ' )' , maleCount],
+              ['Female ( ' + String(femaleCount) + ' )' , femaleCount] ]"></pie-chart>
 
             </div>
           </div>
@@ -108,7 +112,7 @@ CE Store<template lang="html">
                 <div class="titleCont" style="border-left: 4px solid #3366CC;">
                   <label class="name" style="color : #3366CC">TOTAL REVENUE : <span class="totalRevenue">
                     ¥{{revenue}}</span></label>
-                  <label class="value" >ACCUMLATED REVENUE FROM TRAINGINGS , STORE and BUNDLES</label>
+                  <label class="value" >ACCUMLATED REVENUE FROM Store , Store Shipping , Trainings , License , CE Store</label>
 
 
                 </div>
@@ -117,11 +121,13 @@ CE Store<template lang="html">
 
               <pie-chart
               :data="[
-              ['Store' , revenueObj.store],
-              ['Store Shipping' , revenueObj.shippingRevenue],
-              ['Trainings', revenueObj.membership] ,
-              ['License' , revenueObj.license],
-              ['CE Store', revenueObj.bundles] ]"></pie-chart>
+              ['Store ( ¥ ' + String(revenueObj.store) + ' )' , revenueObj.store],
+              ['Store Shipping ( ¥ ' + String(revenueObj.shippingRevenue) + ' )' , revenueObj.shippingRevenue],
+              ['Trainings ( ¥ ' + String(revenueObj.membership) + ' )', revenueObj.membership] ,
+              ['License ( ¥ ' + String(revenueObj.license) + ' )' , revenueObj.license],
+              ['License Renewals ( ¥ ' + String(revenueObj.licenseRenewals) + ' )'  , revenueObj.licenseRenewals],
+              ['CE Store ( ¥ ' + String(revenueObj.bundles) + ' )', revenueObj.bundles] ]"
+              ></pie-chart>
 
             </div>
           </div>
@@ -255,7 +261,7 @@ import ApexCharts from 'apexcharts'
 						.then(function(res) {
               ctx.revenueObj = res.data.data;
               const revenue = res.data.data;
-              var total = parseFloat(revenue.store) + parseFloat(revenue.membership) + parseFloat(revenue.shippingRevenue) +  parseFloat(revenue.license) + parseFloat(revenue.bundles);
+              var total = parseFloat(revenue.licenseRenewals) + parseFloat(revenue.store) + parseFloat(revenue.membership) + parseFloat(revenue.shippingRevenue) +  parseFloat(revenue.license) + parseFloat(revenue.bundles);
               total = total.toFixed(2);
               ctx.revenue = total;
 							NotificationsController.hideActivityIndicator();
