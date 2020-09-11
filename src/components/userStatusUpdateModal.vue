@@ -19,13 +19,24 @@
                         </option>
                     </select>
 
+
+                    
+
                     <div v-if="userApprovalStatus == 'approved'" class="columnBox">
+
+                        
+
+                        <label class="inputTitle spacing30">Course</label>
+                        <select v-model="userCourseModel">
+                            <option disabled value="null">Select one course</option>
+                            <option v-for="item in courses" v-bind:value="item.id" v-bind:key="item.id">
+                                {{item.name}}
+                            </option>
+                        </select>
+
 
                         <label class="inputTitle spacing30">Membership Start Date</label>
                         <input type="date" v-model="startDate" placeholder="Select a start time for the course" class="textInput" />
-
-                        <label class="inputTitle spacing30">Membership End Date</label>
-                        <input type="date" v-model="endDate" placeholder="Select a start time for the course" class="textInput" />
 
                         <label class="inputTitle spacing30">Licnese Start Date</label>
                         <input type="date" v-model="licenseStart" placeholder="Select a start time for the course" class="textInput" />
@@ -67,6 +78,25 @@ export default {
         close: function () {
             this.$root.$emit('closeUserUpdateModal', null);
         },
+        getCourses: function(){
+            const ctx = this;
+
+            var url = URLS.COURSE.LIST_ALL + "?limit=1000&page=1";
+
+            HTTP.get(url,  {
+            headers: {
+                Authorization: localStorage.getItem("token")
+            }
+            })
+            .then(function(res) {
+            ctx.courses = res.data.data.rows;
+            NotificationsController.hideActivityIndicator();
+            })
+            .catch(function(error) {
+            NotificationsController.hideActivityIndicator();
+            NotificationsController.showErrorNotification(error);
+            });
+        },
         updateUser: function () {
             
             
@@ -82,12 +112,21 @@ export default {
 
             if(this.userApprovalStatus == 'approved'){
                 console.log("this.startDate = " , this.startDate);
+
+                if (this.userCourseModel === null || this.userCourseModel === 'null') {
+                    NotificationsController.showNotification('warning', 'Please select a course');
+                    return;
+                }
+
                 if (this.startDate === null || this.startDate === 'null') {
                     NotificationsController.showNotification('warning', 'Please select a membership start date');
                     return;
                 }
 
-                console.log("this.endDate = " , this.endDate);
+                this.endDate = new Date(this.startDate);
+                this.endDate.setFullYear(this.endDate.getFullYear() + 1);
+
+                console.log("this.endDate = " , this.endDate.toISOString().slice(0,10));
                 if (this.endDate === null || this.endDate === 'null') {
                     NotificationsController.showNotification('warning', 'Please select a membership end date');
                     return;
@@ -102,7 +141,9 @@ export default {
                 data.start = this.startDate;
                 data.end = this.endDate;
                 data.licenseStart = this.licenseStart;
+                data.courseId = this.userCourseModel;
 
+                console.log(data)
             }
 
             if(this.userApprovalStatus == 'rejected'){
@@ -142,6 +183,7 @@ export default {
                 'rejected'
             ],
             userApprovalStatus: 'null',
+            userCourseModel: 'null',
             startDate : null,
             endDate : null,
             licenseStart : null,
@@ -149,7 +191,7 @@ export default {
         }
     },
     mounted() {
-
+        this.getCourses();
     }
 };
 </script>
