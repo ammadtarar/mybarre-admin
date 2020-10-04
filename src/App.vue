@@ -958,7 +958,7 @@ table{
 	transition: all 0.25s;
 }
 
-thead th {
+th {
   position: sticky;
   top: -20px;
 	background: #BDBDBD;
@@ -967,8 +967,8 @@ thead th {
 thead{
 	color: #031b4e;
 	font-size: 14px;
-	position: sticky;
-	top: 0;
+	/* position: sticky;
+	top: 0; */
 	background: #BDBDBD;
 
 }
