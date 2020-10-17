@@ -121,6 +121,8 @@ export default {
 	},
 	data() {
 		return {
+			progress : "0%",
+			fileIndex : "0/1",
 			showModal:true,
 			email:null,
 			name:null,
@@ -185,6 +187,7 @@ export default {
 		async onClickPositiveButton(){
 			var ctx = this;
 			NotificationsController.showActivityIndicator();
+			
 			var promises = [];
 
 			let client = new OSS({
@@ -198,38 +201,55 @@ export default {
 				console.log("index = " , index);
 				
 				var file = ctx.files[index];
-				console.log(file);
-				let r1 = await client.put(file.title,file); 
-				var url = r1.url;
-				console.log("url = " , url);
-				
+				try {
+					// object-key可以自定义为文件名（例如file.txt）或目录（例如abc/test/file.txt）的形式，实现将文件上传至当前Bucket或Bucket下的指定目录。
+					let r1 = await client.multipartUpload(file.title, file, { 
+						progress: function (p, checkpoint) {
+							// 断点记录点。浏览器重启后无法直接继续上传，您需要手动触发上传操作。
+							// tempCheckpoint = checkpoint;
+							var text = "Uploading file " + String(index+1) + "/" + String(ctx.files.length) + "<br>" + String(parseFloat(p*100).toFixed(2)) + "%"
+							NotificationsController.showActivityText(text)
+						},
+						meta: { year: 2020, people: 'test' },
+					});
 
-				if (ctx.needStage) {
-					var stages = [];
-					file.stages.forEach((item, i) => {
-						if (item.selected) {
-							stages.push(item.stage)
+				var url = "http://mybarre.oss-accelerate.aliyuncs.com/" + file.title
+
+					if (ctx.needStage) {
+						var stages = [];
+						file.stages.forEach((item, i) => {
+							if (item.selected) {
+								stages.push(item.stage)
+							}
+						});
+						stages = JSON.stringify(stages);
+					}else{
+						stages = JSON.stringify([]);
+					}
+
+					var axios = HTTP.post(URLS.FILE.CREATE ,{
+						type : 'bundle',
+						item_name : file.title,
+						bundle_id : ctx.bundleId,
+						stages : stages,
+						thumb_url : file.type.includes("vid") ? url+'?x-oss-process=video/snapshot,t_50000,f_jpg,w_800,h_600' : '',
+						url : url,
+						mime : file.type
+					}, {
+						headers: {
+							Authorization: localStorage.getItem("token")
 						}
 					});
-					stages = JSON.stringify(stages);
-				}else{
-					stages = JSON.stringify([]);
+					promises.push(axios);	
+
+					
+				} catch(e){
+					console.log(e);
 				}
 
-				var axios = HTTP.post(URLS.FILE.CREATE ,{
-					type : 'bundle',
-					item_name : file.title,
-					bundle_id : ctx.bundleId,
-					stages : stages,
-					thumb_url : file.type.includes("vid") ? url+'?x-oss-process=video/snapshot,t_50000,f_jpg,w_800,h_600' : '',
-					url : url,
-					mime : file.type
-				}, {
-					headers: {
-						Authorization: localStorage.getItem("token")
-					}
-				});
-				promises.push(axios);				
+
+
+							
 			}
 			Promise.all(promises).then(function(values) {
 				console.log(values);

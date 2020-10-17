@@ -17,8 +17,10 @@
       <div class="modal-mask" id="loadingDiv" style=" visibility : hidden">
         <div class="modal-wrapper">
           <div class="modal-container" >
-            <div class="loadingInner" style="width : 100px ; height : 100px ; background : rgba(255, 255, 255, 0.9); border-radius : 10px ;     box-shadow:  1px 1px 4px 4px black;   position: absolute;left: 50%;top: 50%;-webkit-transform: translate(-50%, -50%);transform: translate(-50%, -50%);">
-                <img src="./assets/loading.gif" style="width : 100% ; height : 100% ;" />
+            <div class="loadingInner" style="display: flex; justify-content: center; flex-direction: column;
+  align-items: center;  width : 200px ; height : 200px ; background : rgba(38, 38, 38, 1); border-radius : 10px ;     box-shadow:  1px 1px 4px 4px black;   position: absolute;left: 50%;top: 50%;-webkit-transform: translate(-50%, -50%);transform: translate(-50%, -50%);">
+                <img src="./assets/loading.gif" style="width : 70% ; height : 70% ;" />
+                <label style="color : white; font-size : 12px" id="loadingText"></label>
             </div>
           </div>
         </div>
