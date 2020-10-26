@@ -200,10 +200,12 @@ export default {
 			for (let index = 0; index < ctx.files.length; index++) {
 				console.log("index = " , index);
 				
+				
 				var file = ctx.files[index];
+				let uploadTitle = file.title.replace(/\s/g,'_') + "_" +String(new Date().getTime());
 				try {
 					// object-key可以自定义为文件名（例如file.txt）或目录（例如abc/test/file.txt）的形式，实现将文件上传至当前Bucket或Bucket下的指定目录。
-					let r1 = await client.multipartUpload(file.title, file, { 
+					let r1 = await client.multipartUpload(uploadTitle, file, { 
 						progress: function (p, checkpoint) {
 							// 断点记录点。浏览器重启后无法直接继续上传，您需要手动触发上传操作。
 							// tempCheckpoint = checkpoint;
@@ -213,7 +215,10 @@ export default {
 						meta: { year: 2020, people: 'test' },
 					});
 
-				var url = "http://mybarre.oss-accelerate.aliyuncs.com/" + file.title
+
+
+				var url = "http://mybarre.oss-accelerate.aliyuncs.com/" + uploadTitle;
+				console.log("URL = " , url);
 
 					if (ctx.needStage) {
 						var stages = [];
