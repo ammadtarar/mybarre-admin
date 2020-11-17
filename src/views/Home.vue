@@ -370,12 +370,12 @@ export default {
       this.lvOneIndex = 2;
       this.$router.push("home?lv1Tab=users");
     },
-    showUserDetail(id) {
-      console.log("showUserDetail in home");
+    showUserDetail(id , goToMembership = false) {
+      console.log("showUserDetail in home , goToMembership = " + goToMembership);
       this.userId = id;
       this.lvOneIndex = 2;
       this.lvTwoIndex = 1;
-      this.$router.push("home?lv1Tab=user&lv2Tab=detail?id=" + id);
+      this.$router.push("home?lv1Tab=user&lv2Tab=detail?id=" + id + '&goToMembership=' + goToMembership);
 
       this.lvOneIndex = 2;
 
@@ -468,7 +468,7 @@ export default {
 
         if (page.path === "users" && lv2Tab.includes("detail")) {
           const id = lv2Tab.replace("detail?id=", "");
-          ctx.showUserDetail(id);
+          ctx.showUserDetail(id , false);
         } else if (page.path === "ce" && lv2Tab.includes("detail")) {
           const id = lv2Tab.replace("detail?id=", "");
           ctx.showBundleDetail(id);

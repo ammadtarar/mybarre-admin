@@ -53,15 +53,20 @@
 		          			<td >{{user.gender ? user.gender.toUpperCase() : 'N/A' || 'N/A'}}</td>
 							<td ><span style="white-space: pre-wrap;">{{getCourse(user)}}</span></td>
 							<td >{{getMembershipStatus(user)}}</td>
-              <td >{{user.type.toUpperCase()}}</td>
-              <td >{{user.status.toUpperCase()}}</td>
+              <td >{{user.type}}</td>
+              <td >{{user.status}}</td>
 							<!-- <td>{{getExpiry(user)}}</td> -->
 							<td>
 								<a >
 									<button
-									@click="$emit('showUserDetail' , user.id)"
+									@click="$emit('showUserDetail' , user.id , false)"
 										class="btAction green"
-									>DETAILS</button>
+									>Profile</button>
+
+                  <button
+									@click="$emit('showUserDetail' , user.id , true)"
+										class="btAction green"
+									>Membership</button>
 
                   <button 
                   @click="displayUserUpdateModal(user)"
@@ -72,7 +77,7 @@
                   <button
 									@click="onClickUpdateMembership(user.memberships[0])"
 										class="btAction green"
-									>UPDATE TRAINING STATUS</button>
+									>Update Training Status</button>
 
 								</a>
 							</td>

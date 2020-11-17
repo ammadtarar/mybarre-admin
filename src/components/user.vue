@@ -704,6 +704,7 @@ var OSS = require('ali-oss');
         });
       },
       onMembershipClick(item){
+        console.log("onMembershipClick");
         this.$router.push('home?lv1Tab=user&lv2Tab=detail?id=' + this.id +'&lv4Tab=membership?id=' + item.id);
         this.membershipId = item.id ;
         this.index = 2;
@@ -907,6 +908,10 @@ var OSS = require('ali-oss');
 
           ctx.newStatus = ctx.membership.status;
           NotificationsController.hideActivityIndicator();
+
+          if(ctx.goToMembership){
+            ctx.onMembershipClick(ctx.membership);
+          }
         })
         .catch(function(error) {
           NotificationsController.hideActivityIndicator();
@@ -946,6 +951,12 @@ var OSS = require('ali-oss');
     },
     mounted() {
       let ctx = this;
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const goToMembership = urlParams.get('goToMembership');
+      this.goToMembership = goToMembership === 'true';
+
+
       ctx.getTrainingData();
       ctx.getMembership();
 

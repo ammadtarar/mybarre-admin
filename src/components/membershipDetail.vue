@@ -37,7 +37,7 @@
 				</div>
 
 				<div class="btAction btActionCentered purple" v-if="membership.certificate_url" @click="showCertificate()">
-          VIEW CERTIFICATE
+          DOWNLOAD CERTIFICATE
 				</div>
 
 			</div>
@@ -358,14 +358,14 @@
 
           <label style="color : #37474f">You can upload training license certificate here</label>
 
-          <label class="inputTitle spacing30">Current License</label>
+          <label class="inputTitle spacing30">Current License URL : </label>
           <label style="color : #37474f;" v-if="!membership.certificate_url">No license certificate was found</label>
-          <img  :src="membership.certificate_url" class="imgPreview" v-if="membership.certificate_url">
+          <label style="color : #37474f; word-wrap: break-word;" v-if="membership.certificate_url">{{membership.certificate_url}}</label>
+          <button class="bt pos" style="margin-left : 0px; width : 250px; margin-top : 10px" v-if="membership.certificate_url" @click="showCertificate()">View Licnese</button>
 
-
-          <label class="inputTitle spacing30">New License</label>
-          <img  v-if="!url" src="../assets/image_placeholder.jpg" class="imgPreviewSmall">
-          <img v-if="url" :src="url" class="imgPreview">
+          <label class="inputTitle spacing30">New License File Name :</label>
+          <label style="color : #37474f; word-wrap: break-word;" v-if="url">{{file.name}}</label>
+          <label style="color : #37474f;" v-if="!url">No File Selected</label>
 
         </div>
         <div class="buttonsWrapper" slot="footer">
@@ -373,7 +373,7 @@
             <div style="width : 100% ; height : 100% ; display : flex">
               <label class="prodImgPicker">
                 Select Files
-                <input type="file" @change="onFileChange" />
+                <input type="file" accept="application/pdf" @change="onFileChange" />
               </label>
             </div>
             <button type="button" class="bt neg" @click="showUploadLicenseModal = false ">Abort</button>
@@ -460,9 +460,7 @@ var OSS = require('ali-oss');
         return coupon.name + " / " + str
       },
       showCertificate(){
-        this.$root.$emit('showImage' , {
-          url : this.membership.certificate_url
-        });
+        window.open(this.membership.certificate_url)
       },
       async uploadNewLicense(){
         const ctx = this;
@@ -503,7 +501,9 @@ var OSS = require('ali-oss');
 
       },
       onFileChange(e) {
-				const file = e.target.files[0];
+        const file = e.target.files[0];
+        this.file = file;
+        console.log(file);
       	this.url = URL.createObjectURL(file);
 				this.imgFile = file;
 			 },
