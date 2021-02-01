@@ -27,13 +27,14 @@
 		      <thead>
 		        <tr >
 							<th  style="width : 5%">#</th>
-							<th  style="width : 8%">DATE </br>(Start / Expiry)</th>
-		          <th  style="width : 10%">NAME (First/Family/Nick)</th>
-		          <th  style="width : 8%">EMAIL</th>
-		          <th  style="width : 8%">PHONE</th>
-							<th  style="width : 8%">WECHAT ID</th>
+							<th  style="width : 8%">MEMBERSHIP </br>(Start / Expiry)</th>
+              <th  style="width : 8%">LICNESE </br>(Start / Expiry)</th>
+		          <th  style="width : 8%">NAME (First/Family/Nick)</th>
+		          <th  style="width : 6%">EMAIL</th>
+		          <th  style="width : 6%">PHONE</th>
+							<th  style="width : 6%">WECHAT ID</th>
 							<th  style="width : 7%">GENDER</th>
-							<th  style="width : 10%">COURSE</th>
+							<th  style="width : 8%">COURSE</th>
 							<th  style="width : 10%">TRAINING STATUS</th>
               <th  style="width : 5%">TYPE</th>
               <th  style="width : 6%">STATUS</th>
@@ -46,8 +47,9 @@
 
 							<td >{{getIndex(index)}}</td>
 							<td >{{getStartDate(user)}} </br> {{getExpiry(user)}}</td>
+              <td >{{getMembershipDate(user) || 'N/A'}}</td>
 							<td >{{user.first_name || 'N/A'}} / {{user.last_name || 'N/A'}} / {{user.nickname || 'N/A'}}</td>
-		          			<td >{{user.email || 'N/A'}}</td>
+		          <td >{{user.email || 'N/A'}}</td>
 							<td >{{user.phone || 'N/A'}}</td>
 							<td >{{user.wechat_id || 'N/A'}}</td>
 		          			<td >{{user.gender ? user.gender.toUpperCase() : 'N/A' || 'N/A'}}</td>
@@ -363,6 +365,25 @@ export default {
       }
 
       const start = active.start || null;
+      if (start === null) {
+        return "N/A";
+      }
+      return start;
+    },
+    getMembershipDate(user) {
+      const memberships = user.memberships || null;
+      if (memberships === null) {
+        return "N/A";
+      }
+      if (memberships.length <= 0) {
+        return "N/A";
+      }
+      const active = memberships[memberships.length - 1] || null;
+      if (active === null) {
+        return "N/A";
+      }
+
+      const start = active.license_creation_date || null;
       if (start === null) {
         return "N/A";
       }

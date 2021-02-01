@@ -168,12 +168,12 @@
 
       <div class="half-half" >
         <div class="keyValCont">
-          <label class="key">Start</label>
-          <label class="val">{{membership.start || 'N/A'}}</label>
+          <label class="key">Membership (Start - End)</label>
+          <label class="val">{{membership.start || 'N/A'}} - {{membership.end || 'N/A'}}</label>
         </div>
         <div class="keyValCont">
-          <label class="key">End</label>
-          <label class="val">{{membership.end || 'N/A'}}</label>
+          <label class="key">License (Start - End)</label>
+          <label class="val">{{membership.license_creation_date || 'N/A'}}</label>
         </div>
       </div>
 

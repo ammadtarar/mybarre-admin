@@ -389,8 +389,8 @@
         <thead>
           <tr >
             <th  style="width : 5%">ID</th>
-            <th  style="width : 10%">START</th>
-            <th  style="width : 10%">END</th>
+            <th  style="width : 10%">MEMBERSHIP (START - END)</th>
+            <th  style="width : 10%">LICENSE (START - END)</th>
             <th  style="width : 10%">STATUS</th>
             <th  style="width : 15%">PAYMENT OUT TRADE #</th>
             <th  style="width : 15%">WAS COUPON USED</th>
@@ -400,8 +400,8 @@
         <tbody>
           <tr  v-bind:key="item.id" v-for="item in memberships">
             <td >{{item.id || 'N/A'}}</td>
-            <td >{{item.start || 'N/A'}}</td>
-            <td >{{item.end || 'N/A'}}</td>
+            <td >{{item.start || 'N/A'}} - {{item.end || 'N/A'}}</td>
+            <td >{{item.license_creation_date || 'N/A'}}</td>
             <td >{{item.status ? item.status.replace('-' , ' ').toUpperCase() : 'N/A'}}</td>
             <td >{{item.out_trade_no || 'N/A'}}</td>
             <td >{{item.couponId > 0  ? 'Yes' :  'No'}}</td>
